@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>명산 스탬프 투어</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#efe6d4; --paper:#f7f1e6; --ink:#1a1712; --muted:#6a5e4c;
+  --forest:#1e3a2a; --green:#2f5d46; --gold:#b58a3c; --red:#b23a2a;
+  --line:#d3c4a8; --card:#fffaf1;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--ink);background:#eadfc8;min-height:100vh}
+.sky{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.aurora{position:absolute;filter:blur(30px);opacity:.4;border-radius:50%;animation:drift 20s ease-in-out infinite alternate}
+.a1{width:70vw;height:40vh;left:-10vw;top:-8vh;background:linear-gradient(120deg,#cfe0c4,#ead7a0)}
+.a2{width:60vw;height:36vh;right:-12vw;top:10vh;background:linear-gradient(200deg,#c5d4c0,#e8c9a0);animation-duration:26s}
+@keyframes drift{to{transform:translate(6vw,3vh) scale(1.08)}}
+.mist{position:absolute;left:-20%;width:140%;height:16vh;background:linear-gradient(90deg,transparent,#fff8,transparent);filter:blur(14px);animation:sweep 16s linear infinite;opacity:.45}
+.m1{top:22%}.m2{top:55%;animation-duration:22s}
+@keyframes sweep{from{transform:translateX(-15%)}to{transform:translateX(15%)}}
+#intro,#main{position:relative;z-index:1}
+.intro{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 16px;
+  background:linear-gradient(180deg,#15241c 0%,#2a4030 55%,#3d5340 100%)}
+.intro-card{width:min(420px,100%);background:linear-gradient(180deg,#fffaf1,#f3e7d0);border:1px solid #e0cfab;border-radius:22px;padding:32px 24px 26px;text-align:center;box-shadow:0 30px 60px -24px #0008}
+.eyebrow{display:inline-block;font-size:11px;letter-spacing:2px;font-weight:700;color:var(--forest);background:#efe3c8;border:1px solid #d8c49a;border-radius:999px;padding:5px 12px}
+.intro h1{font-family:'Noto Serif KR',serif;font-size:28px;margin:12px 0 6px;color:var(--forest)}
+.intro-lead{font-size:20px;font-weight:800;color:var(--forest);margin:0 0 6px}
+.intro p{color:var(--muted);font-size:13.5px;line-height:1.7}
+.stats3{display:flex;gap:8px;margin:16px 0}
+.stat{flex:1;background:#fff8;border:1px solid #e0cfab;border-radius:12px;padding:10px 4px}
+.stat b{display:block;font-family:'Noto Serif KR',serif;font-size:18px;color:var(--forest)}
+.stat span{font-size:10px;color:var(--muted)}
+.start{width:100%;border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#3a6b4f,#234736);cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:14px 14px 90px}
+.top{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top h1{font-family:'Noto Serif KR',serif;font-size:20px;margin:0;color:var(--forest)}
+.top .sub{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.ring-num{font-family:'Noto Serif KR',serif;font-size:18px;color:var(--forest);font-weight:900}
+.searchrow{display:flex;gap:8px;margin:12px 0 8px}
+.searchrow input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--card)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filters button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer;color:var(--muted)}
+.filters button.on{background:var(--forest);color:#fff;border-color:var(--forest)}
+.region{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.region-head{display:flex;justify-content:space-between;padding:12px 14px;cursor:pointer;background:#f3ead8}
+.region-name{font-family:'Noto Serif KR',serif;font-weight:700;color:var(--forest)}
+.grid{display:none;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:10px;padding:14px}
+.region.open .grid{display:grid}
+.stamp-btn{background:0;border:0;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;gap:6px}
+.circle{width:58px;height:58px;border-radius:50%;border:1.5px dashed #b7a27d;background:radial-gradient(circle at 35% 30%,#fffdf8,#efe4cf);display:flex;align-items:center;justify-content:center;position:relative}
+.circle.done{border:2.5px solid var(--red);background:radial-gradient(circle at 32% 28%,#f7d4cb,#c24a38 58%,#8e2d22);transform:rotate(-6deg);color:#f8e6d8;font-family:'Noto Serif KR',serif;font-weight:900;font-size:11px}
+.circle.done.has-photo{background-size:cover;background-position:center}
+.circle.done.has-photo span.mark{background:#6e1c1280;border-radius:50%;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.m-name{font-size:11.5px;font-weight:700;text-align:center;max-width:80px}
+.m-elev{font-size:10px;color:var(--green);font-weight:700}
+.m-date{font-size:9px;color:var(--red)}
+.course-box{display:none;margin:0 12px 12px;padding:10px 12px;background:#f4ead6;border-radius:10px;border:1px solid var(--line);font-size:11px;color:var(--muted)}
+.region.open .course-box{display:block}
+.nav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(520px,calc(100% - 20px));background:#fffaf3ee;border:1px solid var(--line);border-radius:16px;display:flex;z-index:20;backdrop-filter:blur(8px)}
+.nav button{flex:1;border:0;background:0;padding:10px 0 8px;font:inherit;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer}
+.nav button.on{color:var(--forest)}
+.view{display:none}.view.on{display:block}
+.map-wrap{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.kmap-box{position:relative;width:100%;margin-top:8px;border-radius:14px;overflow:hidden;background:#cfe6f5}
+.kmap-box img.kmap{width:100%;height:auto;display:block}
+.kmap-box .mdot{position:absolute;width:9px;height:9px;margin:-4px 0 0 -4px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 1px 3px #0004;padding:0;z-index:2}
+.kmap-box .mdot.done{background:#b23a2a;width:11px;height:11px;margin:-5px 0 0 -5px}
+.kmap-box .mdot.todo{background:#8a7a5a;opacity:.55}
+.kmap-legend{font-size:11px;color:var(--muted);margin-top:8px}
+.map-svg{width:100%;height:auto;display:block}
+.map-sea{fill:#d7e6ef}
+.map-land{fill:#e7d7b8;stroke:#b79d6a;stroke-width:1.2}
+.rshape{stroke:#8d7348;stroke-width:1;cursor:pointer;transition:fill .2s}
+.rshape:hover{filter:brightness(1.08)}
+.mdot{stroke:#fff;stroke-width:.6;cursor:pointer}
+.mdot.todo{fill:#cbbb9a;opacity:.55}
+.mdot.done{fill:#b23a2a}
+
+.rchip{cursor:pointer}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.scard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.scard b{display:block;font-size:18px;font-family:'Noto Serif KR',serif;color:var(--forest)}
+.ach{display:flex;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-top:8px;align-items:center}
+.ach.off{opacity:.42;filter:grayscale(.6)}
+.ach i{font-style:normal;font-size:22px;width:36px;text-align:center}
+.sheet-dim{position:fixed;inset:0;background:#0006;display:none;z-index:70}
+.sheet-dim.on{display:block}
+.sheet{position:fixed;left:50%;bottom:0;transform:translate(-50%,110%);width:min(460px,100%);background:linear-gradient(180deg,#fffaf1,#f3e7d0);border:1px solid #e0cfab;border-radius:20px 20px 0 0;padding:16px 16px calc(88px + env(safe-area-inset-bottom));z-index:80;transition:.3s;max-height:88vh;overflow:auto}
+.sheet.on{transform:translate(-50%,0)}
+.sheet h3{margin:0 0 4px;font-family:'Noto Serif KR',serif;color:var(--forest)}
+.sheet-info{margin:10px 0;padding:10px 12px;background:#f4ead6;border:1px solid var(--line);border-radius:12px;font-size:12.5px;line-height:1.55;color:var(--ink)}
+.sheet-info p{margin:0 0 6px}
+.sheet-info p:last-child{margin:0}
+.sheet-info b{color:var(--forest)}
+.sheet-info .empty{color:var(--muted)}
+.sheet img{width:100%;height:170px;object-fit:cover;border-radius:12px;display:none;border:1px solid var(--line)}
+.sheet img.show{display:block}
+.sheet input,.sheet textarea,.sheet select{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:inherit;background:#fff}
+.sheet textarea{min-height:64px;resize:vertical}
+.sbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sbtns button{flex:1;min-width:110px;border:1px solid var(--line);background:#fffaf1;border-radius:10px;padding:10px;font-weight:700;cursor:pointer}
+.sbtns .pri{background:linear-gradient(180deg,#3a6b4f,#234736);color:#fff;border-color:#234736}
+.sbtns .danger{color:#fff;background:#b23a2a;border-color:#8a2a1e}
+.note{text-align:center;font-size:11px;color:var(--muted);margin:12px 8px}
+.bar{height:8px;background:#e6d9c0;border-radius:99px;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#2f5d46,#b58a3c)}
+.cmp{margin-top:8px;padding:8px 0;border-top:1px dashed var(--line);font-size:13px}
+.cmp .pct{color:var(--green);font-weight:800}
+.rec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+button.reset{display:block;margin:16px auto 0;background:0;border:1px solid var(--line);border-radius:999px;padding:8px 16px;color:var(--muted)}
+
+.login{margin-top:18px;text-align:left}
+.login label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+.login input{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;font:inherit}
+.login-btns{display:flex;gap:8px;margin-top:14px}
+.login-btns button{flex:1}
+.userlist{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.userchip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer}
+.who{font-size:12px;color:var(--muted);margin-top:4px}
+
+
+#boom{position:fixed;inset:0;pointer-events:none;z-index:120;overflow:hidden}
+.spark{position:fixed;left:0;top:0;font-size:22px;will-change:transform,opacity;pointer-events:none;z-index:121;text-shadow:0 3px 8px #0003}
+.boom-flash{position:fixed;inset:0;pointer-events:none;z-index:119;opacity:0}
+.boom-banner{position:fixed;left:50%;top:18%;transform:translate(-50%,-40px) scale(.6);font-family:'Noto Serif KR',serif;font-weight:900;font-size:clamp(28px,8vw,52px);color:#fff;text-shadow:0 0 18px #c1543f,0 4px 0 #7a2418,0 10px 24px #0008;z-index:122;pointer-events:none;white-space:nowrap}
+@keyframes shakewin{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-10px,6px) rotate(-1deg)}
+  40%{transform:translate(12px,-8px) rotate(1.2deg)}
+  60%{transform:translate(-8px,-4px) rotate(-.8deg)}
+  80%{transform:translate(8px,7px) rotate(.6deg)}
+}
+
+</style>
+</head>
+<body>
+<div id="boom"></div>
+<div class="sky"><div class="aurora a1"></div><div class="aurora a2"></div><div class="mist m1"></div><div class="mist m2"></div></div>
+<div id="intro" class="intro">
+  <div class="intro-card">
+    <span class="eyebrow">MOUNTAIN STAMP JOURNAL</span>
+    <p class="intro-lead">오늘도 산 하나</p>
+    <h1>명산 스탬프 투어</h1>
+    <p>대한민국 149개 명산을 기록하세요.</p>
+    <div class="stats3">
+      <div class="stat"><b>149</b><span>🏔️ 명산</span></div>
+      <div class="stat"><b>9</b><span>📍 권역</span></div>
+      <div class="stat"><b>22</b><span>🥾 국립공원</span></div>
+    </div>
+    <div class="login">
+      <label>이름</label>
+      <input id="loginName" placeholder="예: 김은정" autocomplete="username">
+      <label>비밀번호 (숫자 4자리)</label>
+      <input id="loginPin" placeholder="••••" inputmode="numeric" maxlength="4" autocomplete="current-password">
+      <div class="login-btns">
+        <button class="start" id="loginBtn" style="margin-top:0">로그인</button>
+        <button id="signupBtn">새 수첩</button>
+      </div>
+      <div class="userlist" id="userList"></div>
+    </div>
+  </div>
+</div>
+<div id="main" class="wrap" style="display:none">
+  <header class="top">
+    <div>
+      <h1>명산 스탬프 투어</h1>
+      <p class="sub" id="subline">전국 명산을 하나씩 밟아가는 등정 수첩</p>
+      <p class="who" id="who"></p>
+    </div>
+    <div style="text-align:right">
+      <div class="ring-num" id="ringPct">0%</div>
+      <div class="sub" id="ringLabel">0 / 0</div>
+    </div>
+  </header>
+  <div id="view-list" class="view on">
+    <div class="searchrow"><input id="q" placeholder="🔍 산 이름 검색"></div>
+    <div class="filters">
+      <button class="on" data-f="all">전체</button>
+      <button data-f="done">완등</button>
+      <button data-f="todo">미완등</button>
+      <button data-f="np">국립공원</button>
+      <button data-f="kilo">1000m+</button>
+    </div>
+    <div id="listApp"></div>
+    <p class="note">산 칸을 누르면 기록장이 열려요. 사진·메모·날씨·코스·시간을 남길 수 있습니다.</p>
+  </div>
+  <div id="view-map" class="view"><div id="mapApp"></div></div>
+  <div id="view-stats" class="view"><div id="statsApp"></div></div>
+  <div id="view-set" class="view"><div id="setApp"></div></div>
+</div>
+<nav class="nav" id="tabNav" style="display:none">
+  <button class="on" data-v="list">목록</button>
+  <button data-v="map">지도</button>
+  <button data-v="stats">통계</button>
+  <button data-v="set">설정</button>
+</nav>
+<div id="sheetDim" class="sheet-dim"></div>
+<div id="sheet" class="sheet">
+  <h3 id="sheetTitle">산</h3>
+  <p class="sub" id="sheetSub"></p>
+  <div class="sheet-info" id="sheetInfo"></div>
+  <div class="sheet-info" id="sheetPeople" style="display:none"></div>
+  <img id="sheetPhoto" alt="정상 사진">
+  <input id="dateEdit" type="date">
+  <select id="weather">
+    <option value="">날씨 선택</option>
+    <option>맑음</option><option>구름</option><option>흐림</option><option>비</option><option>눈</option><option>안개</option>
+  </select>
+  <input id="courseNote" placeholder="🥾 코스">
+  <input id="hours" placeholder="⏱️ 걸린 시간 (예: 4시간 20분)">
+  <textarea id="memo" placeholder="한줄 메모"></textarea>
+  <div class="sbtns">
+    <button class="pri" id="photoBtn">사진 올리기</button>
+    <button id="photoClearBtn">사진 지우기</button>
+    <button class="danger" id="unstampBtn">완등 취소</button>
+    <button id="sheetClose">저장하고 닫기</button>
+  </div>
+</div>
+<input type="file" id="photoInput" accept="image/*" hidden>
+<script>
+const REGIONS = [
+  ["수도권", ["감악산","관악산","광교산","검단산","고려산","남한산","도봉산","마니산","명지산","백운산","북한산","불암산","서리산","수락산","수리산","소요산","용문산","운악산","유명산","연인산","천마산","청계산","축령산","화악산"]],
+  ["강원", ["가리산","가리왕산","감악산","계방산","공작산","금대봉","대암산","덕항산","두타산","마대산","민둥산","석화산","명성산","선자령","방태산","백덕산","백운산","삼악산","설악산","오대산","오대산 노인봉","오봉산","용화산","점봉산","치악산","태백산","태화산","팔봉산","함백산"]],
+  ["대전·세종·충남", ["가야산","광덕산","계룡산","대둔산","덕숭산","서대산","오서산","용봉산","진악산","칠갑산"]],
+  ["충북", ["구병산","금수산","도락산","민주지산","소백산","속리산","월악산","천태산","청화산","칠보산","황정산","희양산"]],
+  ["대구·경북", ["가야산","금오산","경주 남산","내연산","대야산","문수산","비슬산","성인봉","운문산","응봉산","일월산","조령산","주왕산","주흘산","청량산","토함산","팔공산","황악산","황장산"]],
+  ["부산·울산·경남", ["가지산","계룡산","금산(남해)","금정산","남덕유산","남산제일봉","무학산","미륵산","신불산","연화산","재약산","지리산","통영 지리산","천성산","천주산","천황산","화왕산","황매산","황석산"]],
+  ["전북", ["강천산","구봉산","내장산","덕유산","마이산","만행산","모악산","방장산","백암산","백운산","변산","선운산","신무산","운장산","지리산 바래봉","지리산 반야봉","장안산","적상산","천상데미"]],
+  ["광주·전남", ["깃대봉","달마산","덕룡산","동악산","두륜산","무등산","병풍산","불갑산","백운산","영취산","월출산","조계산","제암산","천관산","추월산","축령산","팔영산"]],
+  ["제주", ["한라산"]]
+];
+
+const PEAK_SVG = `<svg class="peak" width="26" height="20" viewBox="0 0 26 20"><path d="M1 19 L9 5 L13 11 L17 3 L25 19 Z" fill="none" stroke="#2f5d46" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+
+// 정상(봉우리) 고도(m) — 산림청 100대 명산 공식 자료 및 관련 공개 자료 기준.
+const ELEV = {
+  "수도권::감악산":675, "수도권::관악산":632, "수도권::검단산":657, "수도권::고려산":436,
+  "수도권::광교산":582, "수도권::남한산":522, "수도권::도봉산":740, "수도권::마니산":472,
+  "수도권::명지산":1252, "수도권::백운산":903, "수도권::북한산":836, "수도권::불암산":508,
+  "수도권::서리산":825, "수도권::수락산":637, "수도권::수리산":489, "수도권::소요산":588,
+  "수도권::용문산":1157, "수도권::운악산":935, "수도권::유명산":864, "수도권::연인산":1068,
+  "수도권::천마산":810, "수도권::청계산":582, "수도권::축령산":887, "수도권::화악산":1468,
+  "강원::가리산":1051, "강원::가리왕산":1562, "강원::감악산":930, "강원::계방산":1579,
+  "강원::공작산":887, "강원::금대봉":1418, "강원::대암산":1313, "강원::덕항산":1073,
+  "강원::두타산":1357, "강원::마대산":1052, "강원::민둥산":1119, "강원::석화산":1146,
+  "강원::명성산":922, "강원::선자령":1157, "강원::방태산":1446, "강원::백덕산":1350,
+  "강원::백운산":884, "강원::삼악산":656, "강원::설악산":1708, "강원::오대산":1565,
+  "강원::오대산 노인봉":1338, "강원::오봉산":778, "강원::용화산":878, "강원::점봉산":1426,
+  "강원::치악산":1282, "강원::태백산":1567, "강원::태화산":1028, "강원::팔봉산":328,
+  "강원::함백산":1573,
+  "대전·세종·충남::가야산":678, "대전·세종·충남::광덕산":699, "대전·세종·충남::계룡산":847,
+  "대전·세종·충남::대둔산":879, "대전·세종·충남::덕숭산":495, "대전·세종·충남::서대산":905,
+  "대전·세종·충남::오서산":791, "대전·세종·충남::용봉산":381, "대전·세종·충남::진악산":732,
+  "대전·세종·충남::칠갑산":560,
+  "충북::구병산":876, "충북::금수산":1016, "충북::도락산":965, "충북::민주지산":1242,
+  "충북::소백산":1440, "충북::속리산":1058, "충북::월악산":1095, "충북::천태산":714,
+  "충북::청화산":970, "충북::칠보산":778, "충북::황정산":959, "충북::희양산":996,
+  "대구·경북::가야산":1433, "대구·경북::금오산":977, "대구·경북::경주 남산":495,
+  "대구·경북::내연산":711, "대구·경북::대야산":931, "대구·경북::문수산":1207,
+  "대구·경북::비슬산":1083, "대구·경북::성인봉":987, "대구·경북::운문산":1195,
+  "대구·경북::응봉산":1000, "대구·경북::일월산":1219, "대구·경북::조령산":1026,
+  "대구·경북::주왕산":722, "대구·경북::주흘산":1108, "대구·경북::청량산":870,
+  "대구·경북::토함산":745, "대구·경북::팔공산":1192, "대구·경북::황악산":1111,
+  "대구·경북::황장산":1079,
+  "부산·울산·경남::가지산":1241, "부산·울산·경남::계룡산":566, "부산·울산·경남::금산(남해)":705,
+  "부산·울산·경남::금정산":801, "부산·울산·경남::남덕유산":1507, "부산·울산·경남::남산제일봉":1010,
+  "부산·울산·경남::무학산":761, "부산·울산·경남::미륵산":458, "부산·울산·경남::신불산":1159,
+  "부산·울산·경남::연화산":524, "부산·울산·경남::재약산":1119, "부산·울산·경남::지리산":1915,
+  "부산·울산·경남::통영 지리산":399, "부산·울산·경남::천성산":920, "부산·울산·경남::천주산":638,
+  "부산·울산·경남::천황산":1189, "부산·울산·경남::화왕산":758, "부산·울산·경남::황매산":1113,
+  "부산·울산·경남::황석산":1193,
+  "전북::강천산":586, "전북::구봉산":1002, "전북::내장산":764, "전북::덕유산":1614,
+  "전북::마이산":687, "전북::만행산":909, "전북::모악산":795, "전북::백운산":1279,
+  "전북::방장산":734, "전북::백암산":741, "전북::변산":459, "전북::선운산":335,
+  "전북::신무산":897, "전북::운장산":1126, "전북::적상산":1031, "전북::지리산 바래봉":1165,
+  "전북::지리산 반야봉":1732, "전북::장안산":1237, "전북::천상데미":1080,
+  "광주·전남::깃대봉":368, "광주·전남::달마산":489, "광주·전남::덕룡산":432,
+  "광주·전남::동악산":735, "광주·전남::두륜산":700, "광주·전남::무등산":1187,
+  "광주·전남::병풍산":826, "광주·전남::불갑산":516, "광주·전남::백운산":1222,
+  "광주·전남::영취산":510, "광주·전남::월출산":811, "광주·전남::조계산":887,
+  "광주·전남::제암산":807, "광주·전남::천관산":724, "광주·전남::추월산":731,
+  "광주·전남::축령산":621, "광주·전남::팔영산":607,
+  "제주::한라산":1947
+};
+
+// 산 하나에 딸린 주요 봉우리(세부 정상) — 널리 알려진 경우만 표기
+
+const PEAKS = {
+  "수도권::감악산":"감악산비·임꺽정봉·장군봉·까치봉",
+  "수도권::관악산":"연주대·삼성산",
+  "수도권::광교산":"시루봉·형제봉",
+  "수도권::검단산":"검단산 정상",
+  "수도권::고려산":"고려산 정상·낙조봉",
+  "수도권::남한산":"남한산성 청량산",
+  "수도권::도봉산":"자운봉·선인봉·만장봉",
+  "수도권::마니산":"참성단·함허동천",
+  "수도권::명지산":"명지 1봉~3봉",
+  "수도권::백운산":"백운산 정상",
+  "수도권::북한산":"백운대·인수봉·만경대",
+  "수도권::불암산":"불암산 정상·시루봉",
+  "수도권::서리산":"서리산 정상",
+  "수도권::수락산":"수락산 정상·도정봉",
+  "수도권::수리산":"태을봉·갈미봉·수암봉",
+  "수도권::소요산":"의상대·나한봉",
+  "수도권::용문산":"가섭봉",
+  "수도권::운악산":"망경대",
+  "수도권::유명산":"유명산 정상",
+  "수도권::연인산":"연인산 정상",
+  "수도권::천마산":"천마산 정상",
+  "수도권::청계산":"매봉·옥녀봉",
+  "수도권::축령산":"축령산 정상",
+  "수도권::화악산":"중봉·화악산 정상",
+  "강원::가리산":"1봉~3봉",
+  "강원::가리왕산":"가리왕산 정상·중봉",
+  "강원::감악산":"감악산 정상",
+  "강원::계방산":"계방산 정상",
+  "강원::공작산":"공작산 정상",
+  "강원::금대봉":"금대봉·은대봉",
+  "강원::대암산":"대암산 정상·용늪",
+  "강원::덕항산":"덕항산 정상·제암산",
+  "강원::두타산":"두타산 정상·청옥산",
+  "강원::마대산":"마대산 정상",
+  "강원::민둥산":"민둥산 정상·억새평원",
+  "강원::석화산":"석화산 정상",
+  "강원::명성산":"명성산 정상·비로봉",
+  "강원::선자령":"선자령 정상",
+  "강원::방태산":"주억봉·구룡덕봉",
+  "강원::백덕산":"백덕산 정상",
+  "강원::백운산":"백운산 정상",
+  "강원::삼악산":"용화봉",
+  "강원::설악산":"대청봉·중청봉·울산바위·공룡능선",
+  "강원::오대산":"비로봉·호령봉·상왕봉",
+  "강원::오대산 노인봉":"노인봉",
+  "강원::오봉산":"1봉~5봉",
+  "강원::용화산":"용화산 정상",
+  "강원::점봉산":"점봉산 정상",
+  "강원::치악산":"비로봉·남대봉·향로봉",
+  "강원::태백산":"장군봉·문수봉",
+  "강원::태화산":"태화산 정상",
+  "강원::팔봉산":"1봉~8봉",
+  "강원::함백산":"함백산 정상",
+  "대전·세종·충남::가야산":"가야봉·원효봉",
+  "대전·세종·충남::광덕산":"광덕산 정상",
+  "대전·세종·충남::계룡산":"천황봉·관음봉·연천봉",
+  "대전·세종·충남::대둔산":"마천대·낙조대",
+  "대전·세종·충남::덕숭산":"덕숭산 정상",
+  "대전·세종·충남::서대산":"서대산 정상",
+  "대전·세종·충남::오서산":"오서산 정상",
+  "대전·세종·충남::용봉산":"용봉산 정상",
+  "대전·세종·충남::진악산":"진악산 정상",
+  "대전·세종·충남::칠갑산":"칠갑산 정상·아흔아홉골",
+  "충북::구병산":"9개 암봉",
+  "충북::금수산":"금수산 정상",
+  "충북::도락산":"신선대",
+  "충북::민주지산":"민주지산 정상",
+  "충북::소백산":"비로봉·연화봉·국망봉",
+  "충북::속리산":"천왕봉·문장대·입석대",
+  "충북::월악산":"영봉",
+  "충북::천태산":"천태산 정상",
+  "충북::청화산":"청화산 정상",
+  "충북::칠보산":"칠보산 정상",
+  "충북::황정산":"황정산 정상",
+  "충북::희양산":"희양산 정상",
+  "대구·경북::가야산":"상왕봉(칠불봉)·두리봉",
+  "대구·경북::금오산":"현월봉·약사봉",
+  "대구·경북::경주 남산":"금오봉·고위봉",
+  "대구·경북::내연산":"향로봉·삼지봉",
+  "대구·경북::대야산":"대야산 정상",
+  "대구·경북::문수산":"문수산 정상",
+  "대구·경북::비슬산":"천왕봉·대견봉",
+  "대구·경북::성인봉":"성인봉",
+  "대구·경북::운문산":"운문산 정상",
+  "대구·경북::응봉산":"응봉산 정상",
+  "대구·경북::일월산":"일자봉·월자봉",
+  "대구·경북::조령산":"조령산 정상",
+  "대구·경북::주왕산":"주봉·향로봉",
+  "대구·경북::주흘산":"영봉",
+  "대구·경북::청량산":"장인봉·금탑봉",
+  "대구·경북::토함산":"토함산 정상",
+  "대구·경북::팔공산":"비로봉·동봉·서봉",
+  "대구·경북::황악산":"비로봉",
+  "대구·경북::황장산":"황장산 정상",
+  "부산·울산·경남::가지산":"가지산 정상",
+  "부산·울산·경남::계룡산":"계룡산 정상",
+  "부산·울산·경남::금산(남해)":"봉수대·정상",
+  "부산·울산·경남::금정산":"고당봉·원효봉",
+  "부산·울산·경남::남덕유산":"서봉",
+  "부산·울산·경남::남산제일봉":"남산제일봉",
+  "부산·울산·경남::무학산":"무학산 정상",
+  "부산·울산·경남::미륵산":"미륵산 정상",
+  "부산·울산·경남::신불산":"신불산 정상·영축산",
+  "부산·울산·경남::연화산":"연화산 정상",
+  "부산·울산·경남::재약산":"수미봉",
+  "부산·울산·경남::지리산":"천왕봉·반야봉·노고단",
+  "부산·울산·경남::통영 지리산":"통영 지리산 정상",
+  "부산·울산·경남::천성산":"비로봉",
+  "부산·울산·경남::천주산":"천주산 정상",
+  "부산·울산·경남::천황산":"사자봉",
+  "부산·울산·경남::화왕산":"화왕산 정상",
+  "부산·울산·경남::황매산":"황매산 정상·모산재",
+  "부산·울산·경남::황석산":"황석산 정상",
+  "전북::강천산":"왕자봉",
+  "전북::구봉산":"1봉~9봉",
+  "전북::내장산":"신선봉·까치봉·연지봉",
+  "전북::덕유산":"향적봉·중봉·남덕유",
+  "전북::마이산":"암마이봉·수마이봉",
+  "전북::만행산":"천황봉",
+  "전북::모악산":"모악산 정상",
+  "전북::방장산":"연화봉",
+  "전북::백암산":"상왕봉",
+  "전북::백운산":"백운산 정상",
+  "전북::변산":"의상봉·관음봉",
+  "전북::선운산":"수리봉·도솔암",
+  "전북::신무산":"신무산 정상",
+  "전북::운장산":"운장대",
+  "전북::지리산 바래봉":"바래봉",
+  "전북::지리산 반야봉":"반야봉",
+  "전북::장안산":"장안산 정상",
+  "전북::적상산":"향로봉",
+  "전북::천상데미":"천상데미",
+  "광주·전남::깃대봉":"깃대봉",
+  "광주·전남::달마산":"불썬봉",
+  "광주·전남::덕룡산":"덕룡산 정상",
+  "광주·전남::동악산":"동악산 정상",
+  "광주·전남::두륜산":"가련봉",
+  "광주·전남::무등산":"천왕봉·서석대·입석대",
+  "광주·전남::병풍산":"병풍산 정상",
+  "광주·전남::불갑산":"연실봉",
+  "광주·전남::백운산":"상봉",
+  "광주·전남::영취산":"영취산 정상",
+  "광주·전남::월출산":"천황봉·구정봉",
+  "광주·전남::조계산":"장군봉",
+  "광주·전남::제암산":"제암산 정상",
+  "광주·전남::천관산":"연대봉",
+  "광주·전남::추월산":"추월산 정상",
+  "광주·전남::축령산":"축령산 정상",
+  "광주·전남::팔영산":"1봉~8봉",
+  "제주::한라산":"백록담·윗세오름"
+};
+
+const COURSE = {
+  "수도권::감악산":"출렁다리~법륜사~정상 · 왕복 약 8km · 4시간",
+  "수도권::관악산":"과천 연주대코스 · 왕복 약 7km · 4시간",
+  "수도권::광교산":"광교저수지~시루봉 · 왕복 약 8km · 4시간",
+  "수도권::검단산":"하산곡동 코스 · 왕복 약 6km · 3시간 30분",
+  "수도권::고려산":"고천암~정상(진달래) · 왕복 약 6km · 3시간",
+  "수도권::남한산":"남한산성 북문~서문 순환 · 약 7km · 3시간",
+  "수도권::도봉산":"도봉탐방지원센터~신선대 · 왕복 7.8km · 약 4시간",
+  "수도권::마니산":"함허동천~참성단 · 왕복 약 6km · 3시간",
+  "수도권::명지산":"명지산계곡~정상 · 왕복 약 10km · 6시간",
+  "수도권::백운산":"백운계곡~정상 · 왕복 약 8km · 4시간 30분",
+  "수도권::북한산":"북한산성코스(백운대) · 왕복 8.5km · 약 4시간 30분",
+  "수도권::불암산":"불암사~정상 · 왕복 약 6km · 3시간 30분",
+  "수도권::서리산":"아침고요 방면 · 왕복 약 7km · 4시간",
+  "수도권::수락산":"장암역~정상 · 왕복 약 7km · 4시간",
+  "수도권::수리산":"태을봉 코스 · 왕복 약 6km · 3시간 30분",
+  "수도권::소요산":"자재암~의상대 · 왕복 약 6km · 3시간 30분",
+  "수도권::용문산":"용문사~가섭봉 · 왕복 약 10km · 6시간",
+  "수도권::운악산":"현리~망경대 · 왕복 약 8km · 5시간",
+  "수도권::유명산":"유명산자연휴양림 코스 · 왕복 약 8km · 4시간",
+  "수도권::연인산":"연인산산림휴양~정상 · 왕복 약 9km · 5시간",
+  "수도권::천마산":"수진사 코스 · 왕복 약 7km · 4시간",
+  "수도권::청계산":"원터골~매봉 · 왕복 약 7km · 3시간 30분",
+  "수도권::축령산":"축령산자연휴양림 코스 · 왕복 약 7km · 3시간 30분",
+  "수도권::화악산":"화악터널~중봉 · 왕복 약 8km · 5시간",
+  "강원::가리산":"가리산자연휴양림 코스 · 왕복 약 7km · 4시간",
+  "강원::가리왕산":"회동리~정상 · 왕복 약 10km · 6시간",
+  "강원::감악산":"원주 감악산 코스 · 왕복 약 7km · 4시간",
+  "강원::계방산":"운두령~정상 · 왕복 약 8km · 4시간 30분",
+  "강원::공작산":"수타사 코스 · 왕복 약 8km · 4시간",
+  "강원::금대봉":"두문동재~금대봉~은대봉 · 약 6km · 3시간",
+  "강원::대암산":"가칠봉~용늪(사전예약) · 왕복 약 8km · 5시간",
+  "강원::덕항산":"삼척 환선굴 방면 · 왕복 약 7km · 4시간",
+  "강원::두타산":"무릉계곡~두타산 · 왕복 약 12km · 7시간",
+  "강원::마대산":"영월 마대산 코스 · 왕복 약 8km · 4시간 30분",
+  "강원::민둥산":"증산초~정상 · 편도 약 2.7km · 왕복 4시간",
+  "강원::석화산":"평창 석화산 코스 · 왕복 약 8km · 4시간 30분",
+  "강원::명성산":"산정호수~정상 · 왕복 약 8km · 4시간 30분",
+  "강원::선자령":"대관령휴게소~선자령 · 왕복 약 10km · 4시간",
+  "강원::방태산":"방동리~주억봉 · 왕복 약 10km · 6시간",
+  "강원::백덕산":"평창 백덕산 코스 · 왕복 약 9km · 5시간",
+  "강원::백운산":"원주 백운산 코스 · 왕복 약 8km · 4시간 30분",
+  "강원::삼악산":"등선폭포~용화봉 · 왕복 약 6km · 3시간 30분",
+  "강원::설악산":"오색코스(대청봉) · 편도 5.0km · 약 4시간",
+  "강원::오대산":"상원사~비로봉 · 왕복 약 10km · 5시간",
+  "강원::오대산 노인봉":"진고개~노인봉 · 왕복 약 8km · 4시간 30분",
+  "강원::오봉산":"청평사 코스 · 왕복 약 7km · 4시간",
+  "강원::용화산":"춘천 용화산 코스 · 왕복 약 8km · 4시간 30분",
+  "강원::점봉산":"진동리~점봉산 · 왕복 약 12km · 7시간",
+  "강원::치악산":"구룡사코스(비로봉) · 왕복 11.4km · 약 6시간 30분",
+  "강원::태백산":"유일사코스 · 왕복 7.2km · 약 3시간 30분",
+  "강원::태화산":"영월 태화산 코스 · 왕복 약 8km · 4시간 30분",
+  "강원::팔봉산":"팔봉산 1~8봉 종주 · 약 5km · 3시간",
+  "강원::함백산":"만항재코스 · 왕복 3km · 약 1시간",
+  "대전·세종·충남::가야산":"석문봉~가야봉 · 왕복 약 8km · 4시간 30분",
+  "대전·세종·충남::광덕산":"광덕고개 코스 · 왕복 약 6km · 3시간",
+  "대전·세종·충남::계룡산":"동학사코스(관음봉 전망대) · 왕복 6km · 약 3시간",
+  "대전·세종·충남::대둔산":"케이블카~마천대 · 왕복 약 5km · 3시간",
+  "대전·세종·충남::덕숭산":"수덕사 코스 · 왕복 약 5km · 3시간",
+  "대전·세종·충남::서대산":"서대산자연휴양림 코스 · 왕복 약 8km · 4시간 30분",
+  "대전·세종·충남::오서산":"오서산자연휴양림 코스 · 왕복 약 6km · 3시간 30분",
+  "대전·세종·충남::용봉산":"용봉산 기암코스 · 왕복 약 5km · 3시간",
+  "대전·세종·충남::진악산":"금산 진악산 코스 · 왕복 약 7km · 4시간",
+  "대전·세종·충남::칠갑산":"장곡사(사찰로) 코스 · 왕복 약 7km · 3시간 30분",
+  "충북::구병산":"내송리 코스 · 왕복 약 8km · 5시간",
+  "충북::금수산":"수산리 코스 · 왕복 약 8km · 4시간 30분",
+  "충북::도락산":"문수암~신선대 · 왕복 약 7km · 4시간",
+  "충북::민주지산":"삼도봉 연계 코스 · 왕복 약 10km · 6시간",
+  "충북::소백산":"희방사코스 · 편도 4.2km · 약 3시간",
+  "충북::속리산":"법주사코스(천왕봉) · 왕복 16.1km · 약 8시간",
+  "충북::월악산":"덕주골코스(영봉) · 왕복 9km · 약 5시간",
+  "충북::천태산":"영국사 코스 · 왕복 약 6km · 3시간 30분",
+  "충북::청화산":"청천면 코스 · 왕복 약 8km · 4시간 30분",
+  "충북::칠보산":"칠보산자연휴양림 코스 · 왕복 약 6km · 3시간",
+  "충북::황정산":"황정산자연휴양림 코스 · 왕복 약 7km · 4시간",
+  "충북::희양산":"은티마을 코스 · 왕복 약 8km · 5시간",
+  "대구·경북::가야산":"백운동코스(상왕봉) · 왕복 10km · 약 5시간",
+  "대구·경북::금오산":"도선굴~현월봉 · 왕복 약 6km · 3시간 30분",
+  "대구·경북::경주 남산":"삼릉코스(금오봉) · 왕복 5.5km · 약 3시간",
+  "대구·경북::내연산":"보경사 12폭포 코스 · 왕복 약 10km · 5시간",
+  "대구·경북::대야산":"용추계곡 코스 · 왕복 약 8km · 4시간 30분",
+  "대구·경북::문수산":"문수암 코스 · 왕복 약 8km · 5시간",
+  "대구·경북::비슬산":"참꽃군락지~천왕봉 · 왕복 약 10km · 5시간",
+  "대구·경북::성인봉":"도동약수터~성인봉 · 왕복 약 9km · 5시간",
+  "대구·경북::운문산":"운문사 코스 · 왕복 약 10km · 6시간",
+  "대구·경북::응봉산":"온정 코스 · 왕복 약 8km · 5시간",
+  "대구·경북::일월산":"일월산 기점 코스 · 왕복 약 8km · 5시간",
+  "대구·경북::조령산":"조령관문 코스 · 왕복 약 7km · 4시간",
+  "대구·경북::주왕산":"대전사코스(주봉) · 왕복 5.8km · 약 3시간",
+  "대구·경북::주흘산":"주흘관 코스 · 왕복 약 8km · 5시간",
+  "대구·경북::청량산":"청량사~장인봉 · 왕복 약 7km · 4시간",
+  "대구·경북::토함산":"불국사~토함산 · 왕복 약 8km · 4시간",
+  "대구·경북::팔공산":"동화사코스(비로봉) · 왕복 9km · 약 5시간",
+  "대구·경북::황악산":"직지사 코스 · 왕복 약 9km · 5시간",
+  "대구·경북::황장산":"황장산 임도 코스 · 왕복 약 8km · 4시간 30분",
+  "부산·울산·경남::가지산":"석남사 코스 · 왕복 약 10km · 6시간",
+  "부산·울산·경남::계룡산":"진해 계룡산 코스 · 왕복 약 6km · 3시간 30분",
+  "부산·울산·경남::금산(남해)":"보리암~봉수대 · 왕복 약 4km · 2시간 30분",
+  "부산·울산·경남::금정산":"범어사코스(고당봉) · 왕복 8km · 약 4시간",
+  "부산·울산·경남::남덕유산":"송계사 방면 · 왕복 약 10km · 6시간",
+  "부산·울산·경남::남산제일봉":"합천 남산제일봉 코스 · 왕복 약 6km · 3시간 30분",
+  "부산·울산·경남::무학산":"무학산 시티트레일 · 왕복 약 8km · 4시간",
+  "부산·울산·경남::미륵산":"미래사~정상 · 왕복 약 5km · 3시간",
+  "부산·울산·경남::신불산":"등억온천~신불산 · 왕복 약 10km · 6시간",
+  "부산·울산·경남::연화산":"연화사 코스 · 왕복 약 6km · 3시간 30분",
+  "부산·울산·경남::재약산":"표충사 코스 · 왕복 약 9km · 5시간",
+  "부산·울산·경남::지리산":"중산리코스(천왕봉) · 왕복 10.8km · 약 8시간",
+  "부산·울산·경남::통영 지리산":"통영 지리산 코스 · 왕복 약 5km · 3시간",
+  "부산·울산·경남::천성산":"원효폭포 코스 · 왕복 약 8km · 4시간 30분",
+  "부산·울산·경남::천주산":"창원 천주산 코스 · 왕복 약 6km · 3시간 30분",
+  "부산·울산·경남::천황산":"얼음골~사자봉 · 왕복 약 10km · 6시간",
+  "부산·울산·경남::화왕산":"화왕산 억새 코스 · 왕복 약 7km · 4시간",
+  "부산·울산·경남::황매산":"황매평전~정상 · 왕복 약 6km · 3시간",
+  "부산·울산·경남::황석산":"안의 황석산성 코스 · 왕복 약 8km · 5시간",
+  "전북::강천산":"강천사~구장군폭포 · 왕복 약 6km · 3시간",
+  "전북::구봉산":"구봉산 9봉 종주 · 약 8km · 5시간",
+  "전북::내장산":"내장사코스(신선봉) · 왕복 9km · 약 4시간",
+  "전북::덕유산":"구천동코스(향적봉) · 왕복 11km · 약 6시간",
+  "전북::마이산":"탑사~암마이봉 전망 · 왕복 약 5km · 3시간",
+  "전북::만행산":"만행산 코스 · 왕복 약 8km · 4시간 30분",
+  "전북::모악산":"금산사 코스 · 왕복 약 7km · 4시간",
+  "전북::방장산":"방장산자연휴양림 코스 · 왕복 약 7km · 4시간",
+  "전북::백암산":"백양사 코스 · 왕복 약 8km · 4시간 30분",
+  "전북::백운산":"백운산자연휴양림 코스 · 왕복 약 9km · 5시간",
+  "전북::변산":"내소사코스(관음봉) · 왕복 8.5km · 약 4시간",
+  "전북::선운산":"선운사~도솔암 · 왕복 약 6km · 3시간 30분",
+  "전북::신무산":"무주 신무산 코스 · 왕복 약 8km · 4시간 30분",
+  "전북::운장산":"운장산자연휴양림 코스 · 왕복 약 8km · 5시간",
+  "전북::지리산 바래봉":"운봉~바래봉 · 왕복 약 10km · 5시간",
+  "전북::지리산 반야봉":"성삼재~노고단~반야봉 · 왕복 약 16km · 8시간",
+  "전북::장안산":"무령고개 코스 · 왕복 약 8km · 4시간 30분",
+  "전북::적상산":"안국사 코스 · 왕복 약 7km · 4시간",
+  "전북::천상데미":"덕유산 연계 능선 · 왕복 약 8km · 5시간",
+  "광주·전남::깃대봉":"금오도 비렁길 연계 · 약 8km · 4시간",
+  "광주·전남::달마산":"미황사~도솔암 · 왕복 약 6km · 3시간 30분",
+  "광주·전남::덕룡산":"덕룡산 코스 · 왕복 약 6km · 3시간 30분",
+  "광주·전남::동악산":"동악산 코스 · 왕복 약 8km · 4시간 30분",
+  "광주·전남::두륜산":"대흥사~가련봉 · 왕복 약 8km · 4시간 30분",
+  "광주·전남::무등산":"증심사코스(서석대) · 왕복 10km · 약 5시간",
+  "광주·전남::병풍산":"병풍산 코스 · 왕복 약 7km · 4시간",
+  "광주·전남::불갑산":"불갑사 코스 · 왕복 약 6km · 3시간 30분",
+  "광주·전남::백운산":"성황초~상봉 · 왕복 약 10km · 6시간",
+  "광주·전남::영취산":"영취산 진달래 코스 · 왕복 약 6km · 3시간 30분",
+  "광주·전남::월출산":"천황사코스(천황봉) · 왕복 8.6km · 약 5시간",
+  "광주·전남::조계산":"송광사~선암사 능선 · 약 10km · 6시간",
+  "광주·전남::제암산":"제암산자연휴양림 코스 · 왕복 약 7km · 4시간",
+  "광주·전남::천관산":"지남마을~연대봉 · 왕복 약 7km · 4시간",
+  "광주·전남::추월산":"추월산 코스 · 왕복 약 7km · 4시간",
+  "광주·전남::축령산":"장흥 축령산 코스 · 왕복 약 6km · 3시간 30분",
+  "광주·전남::팔영산":"팔영산 8봉 종주 · 약 7km · 4시간 30분",
+  "제주::한라산":"성판악코스(사전예약) · 편도 9.6km · 약 4시간 30분"
+};
+
+const FOOD = {
+  "수도권::감악산":"적성한우마을, 샘내손두부, 출렁다리 입구 식당가",
+  "수도권::관악산":"과천 청계탕, 사당 카페·칼국수 골목",
+  "수도권::광교산":"광교호수공원 맛집거리, 수원갈비",
+  "수도권::검단산":"하남 검단산 입구 손두부·백반",
+  "수도권::고려산":"강화 순무김치빈대떡, 강화루",
+  "수도권::남한산":"남한산성 도토리묵, 산성마을 식당가",
+  "수도권::도봉산":"도봉산두부, 도봉산양고기",
+  "수도권::마니산":"강화 갯벌장어, 함허동천 입구 막국수",
+  "수도권::명지산":"가평 명지산계곡 매운탕·닭백숙",
+  "수도권::백운산":"포천 백운계곡 막국수·백숙",
+  "수도권::북한산":"북한산손칼국수, 북한산막국수",
+  "수도권::불암산":"불암사 입구 한식당, 별내 맛집거리",
+  "수도권::서리산":"아침고요수목원 인근 가평 백반",
+  "수도권::수락산":"장암역 순대국·칼국수",
+  "수도권::수리산":"수리산 입구 안양·군포 국밥집",
+  "수도권::소요산":"소요산 입구 동두천 두부·막국수",
+  "수도권::용문산":"용문산산채정식, 양평 다슬기탕",
+  "수도권::운악산":"포천 운악산 입구 백숙·막국수",
+  "수도권::유명산":"유명산 입구 가평 닭갈비·백숙",
+  "수도권::연인산":"가평 연인산 계곡 매운탕",
+  "수도권::천마산":"남양주 천마산 입구 한식당",
+  "수도권::청계산":"청계산입구 순두부·칼국수",
+  "수도권::축령산":"축령산 휴양림 인근 가평 백반",
+  "수도권::화악산":"가평 화악산 입구 산채정식",
+  "강원::가리산":"홍천 가리산 입구 닭갈비·막국수",
+  "강원::가리왕산":"정선 곤드레밥, 회동집 콧등치기국수",
+  "강원::감악산":"원주 감악산 입구 막국수",
+  "강원::계방산":"운두령·평창 황태구이, 막국수",
+  "강원::공작산":"홍천 수타사 입구 닭갈비",
+  "강원::금대봉":"두문동재 인근 황태·곤드레밥",
+  "강원::대암산":"인제 황태덕장 요리, 막국수",
+  "강원::덕항산":"삼척 장호항 물회, 환선굴 입구 식당",
+  "강원::두타산":"동해 무릉계곡 식당가, 한우타운",
+  "강원::마대산":"영월 동강매운탕, 한우",
+  "강원::민둥산":"증산리 억새꽃맛집, 정선 곤드레밥",
+  "강원::석화산":"평창 한우·막국수",
+  "강원::명성산":"산정호수 입구 막국수·백숙",
+  "강원::선자령":"대관령 양떼목장 인근 황태구이",
+  "강원::방태산":"방동약수 인근 산채·황태",
+  "강원::백덕산":"평창 백덕산 입구 막국수",
+  "강원::백운산":"원주 백운산 입구 한우·막국수",
+  "강원::삼악산":"등선폭포 입구 춘천닭갈비",
+  "강원::설악산":"만해정, 오색약수터 식당가, 황태구이",
+  "강원::오대산":"월정사 입구 산채정식, 진부 황태",
+  "강원::오대산 노인봉":"진고개 휴게소·진부 황태구이",
+  "강원::오봉산":"청평사 입구 춘천닭갈비",
+  "강원::용화산":"춘천 용화산 입구 막국수",
+  "강원::점봉산":"진동리 산채·황태",
+  "강원::치악산":"뽕나무집(구룡사), 손두부집",
+  "강원::태백산":"태성실비식당, 태백한우",
+  "강원::태화산":"영월 동강매운탕",
+  "강원::팔봉산":"홍천강 매운탕·닭갈비",
+  "강원::함백산":"만항재 인근 정선 곤드레밥",
+  "대전·세종·충남::가야산":"예산 가야산 입구 한우·국밥",
+  "대전·세종·충남::광덕산":"천안 광덕사 입구 백반",
+  "대전·세종·충남::계룡산":"계룡산산야초식당, 동학사 입구 식당가",
+  "대전·세종·충남::대둔산":"대둔산 관광단지 산채정식",
+  "대전·세종·충남::덕숭산":"수덕사 입구 산채비빔밥",
+  "대전·세종·충남::서대산":"금산 인삼닭죽·삼계탕",
+  "대전·세종·충남::오서산":"보령 오서산 입구 한정식",
+  "대전·세종·충남::용봉산":"홍성 용봉산 입구 한우",
+  "대전·세종·충남::진악산":"금산 인삼삼계탕",
+  "대전·세종·충남::칠갑산":"장곡사 구기자막국수, 바닷물손두부",
+  "충북::구병산":"보은 구병산 입구 산채",
+  "충북::금수산":"제천 금수산 입구 약초백숙",
+  "충북::도락산":"단양 도락산 입구 마늘정식·매운탕",
+  "충북::민주지산":"영동 민주지산 입구 한우·국밥",
+  "충북::소백산":"희방파크식당, 풍기 인삼닭죽",
+  "충북::속리산":"옛고을, 청솔식당",
+  "충북::월악산":"덕주골산장, 제천 약초백숙",
+  "충북::천태산":"영동 영국사 입구 백반",
+  "충북::청화산":"괴산 청화산 입구 산채",
+  "충북::칠보산":"괴산 칠보산 입구 올갱이국",
+  "충북::황정산":"단양 황정산 입구 마늘닭",
+  "충북::희양산":"괴산 은티마을 산채정식",
+  "대구·경북::가야산":"(해인사) 국일식당, 산채비빔밥",
+  "대구·경북::금오산":"구미 금오산 입구 국밥·막창",
+  "대구·경북::경주 남산":"삼릉회식당, 경주 황남빵 골목",
+  "대구·경북::내연산":"보경사 입구 물회·한식당",
+  "대구·경북::대야산":"문경 용추계곡 산채·약초백숙",
+  "대구·경북::문수산":"울진 온정 백암온천 한식당",
+  "대구·경북::비슬산":"비슬산 참꽃 입구 막국수·백숙",
+  "대구·경북::성인봉":"울릉 약소불고기, 홍합밥, 오징어내장탕",
+  "대구·경북::운문산":"운문사 입구 산채정식",
+  "대구·경북::응봉산":"울진 온정·덕구온천 한식당",
+  "대구·경북::일월산":"영양 일월산 입구 고추·한우",
+  "대구·경북::조령산":"문경새재 입구 약초백숙·국밥",
+  "대구·경북::주왕산":"주왕산맛집, 주왕산청솔식당",
+  "대구·경북::주흘산":"문경새재 주흘관 식당가",
+  "대구·경북::청량산":"봉화 청량사 입구 산채·한우",
+  "대구·경북::토함산":"불국사 입구 쌈밥·경주교동쌈밥",
+  "대구·경북::팔공산":"탑골식당, 동화사 입구 산채",
+  "대구·경북::황악산":"김천 직지사 입구 한우·국밥",
+  "대구·경북::황장산":"문경 황장산 입구 산채",
+  "부산·울산·경남::가지산":"석남사 입구 언양불고기",
+  "부산·울산·경남::계룡산":"진해 계룡산 입구 밀면·국밥",
+  "부산·울산·경남::금산(남해)":"보리암 아래 멸치쌈밥, 독일마을 맛집",
+  "부산·울산·경남::금정산":"유씨집, 범어사 입구 밀면",
+  "부산·울산·경남::남덕유산":"거창 송계 산채·한우",
+  "부산·울산·경남::남산제일봉":"합천 한우·국밥",
+  "부산·울산·경남::무학산":"창원 무학산 입구 밀면·아구찜",
+  "부산·울산·경남::미륵산":"미래사 입구 해물찜, 통영충무김밥",
+  "부산·울산·경남::신불산":"등억온천 언양불고기·밀면",
+  "부산·울산·경남::연화산":"고성 연화사 입구 한식당",
+  "부산·울산·경남::재약산":"표충사 입구 산채정식",
+  "부산·울산·경남::지리산":"지리산버거, 우천정, 중산리 산채",
+  "부산·울산·경남::통영 지리산":"통영 충무김밥, 꿀빵, 해물뚝배기",
+  "부산·울산·경남::천성산":"원효폭포 입구 양산 국밥·밀면",
+  "부산·울산·경남::천주산":"창원 천주산 입구 밀면",
+  "부산·울산·경남::천황산":"얼음골 입구 밀면·산채",
+  "부산·울산·경남::화왕산":"창녕 화왕산 입구 한우·국밥",
+  "부산·울산·경남::황매산":"모산재식당, 황매산식당, 가회면 국밥",
+  "부산·울산·경남::황석산":"함양 안의갈비찜, 산채정식",
+  "전북::강천산":"강천사 입구 순창 전통고추장 백반",
+  "전북::구봉산":"진안 구봉산 입구 더덕구이·한우",
+  "전북::내장산":"명인관, 내장사 입구 산채비빔밥",
+  "전북::덕유산":"구천동맛집, 적상 산채",
+  "전북::마이산":"마이산 탑사 입구 산채·한우",
+  "전북::만행산":"완주 만행산 입구 백반",
+  "전북::모악산":"금산사 입구 산채정식, 전주비빔밥",
+  "전북::방장산":"고창 풍천장어, 복분자 한식",
+  "전북::백암산":"백양사 입구 산채·한식당",
+  "전북::백운산":"장수 한우·산채",
+  "전북::변산":"격포 바지락죽, 내소사 입구 산채",
+  "전북::선운산":"선운사 입구 풍천장어·작설차",
+  "전북::신무산":"무주 남대천 은어·한우",
+  "전북::운장산":"진안 운장산 입구 더덕·한우",
+  "전북::지리산 바래봉":"운봉 한우·산채",
+  "전북::지리산 반야봉":"성삼재·노고단 입구 산채",
+  "전북::장안산":"장수 한우타운",
+  "전북::적상산":"적상산 입구 산채·한우",
+  "전북::천상데미":"구천동 식당가",
+  "광주·전남::깃대봉":"금오도 물회·생선구이",
+  "광주·전남::달마산":"미황사 입구 해남 땅끝 한식",
+  "광주·전남::덕룡산":"강진 덕룡산 입구 한정식",
+  "광주·전남::동악산":"곡성 동악산 입구 참게탕",
+  "광주·전남::두륜산":"대흥사 입구 해남 녹차정식",
+  "광주·전남::무등산":"대호식당, 부곡정, 증심사 입구 한식",
+  "광주·전남::병풍산":"화순 병풍산 입구 백반",
+  "광주·전남::불갑산":"불갑사 입구 함평 한우",
+  "광주·전남::백운산":"광양 매화·숯불구이, 백운산 산채",
+  "광주·전남::영취산":"여수 영취산 입구 게장·갓김치정식",
+  "광주·전남::월출산":"월출산산장식당민박, 월출산민물장어",
+  "광주·전남::조계산":"송광사·선암사 입구 산채정식",
+  "광주·전남::제암산":"장흥 제암산 입구 키조개·한우",
+  "광주·전남::천관산":"장흥 천관산 입구 한우·키조개",
+  "광주·전남::추월산":"담양 추월산 입구 떡갈비·국수",
+  "광주·전남::축령산":"장흥 축령산 편백숲 입구 한식",
+  "광주·전남::팔영산":"고흥 팔영산 입구 유자한식·회",
+  "제주::한라산":"탐방로 매점 없음 · 성판악·관음사 입구에서 준비, 고기국수"
+};
+
+const STAMP = {
+  "제주::한라산":"백록",
+  "강원::설악산":"울산",
+  "수도권::북한산":"백운",
+  "대구·경북::팔공산":"비로",
+  "부산·울산·경남::지리산":"천왕",
+  "전북::지리산 반야봉":"반야",
+  "전북::덕유산":"향적",
+  "광주·전남::무등산":"서석",
+  "충북::소백산":"비로",
+  "충북::속리산":"문장",
+  "대전·세종·충남::계룡산":"관음",
+  "강원::치악산":"비로",
+  "강원::태백산":"장군",
+  "강원::오대산":"비로",
+  "전북::마이산":"말귀",
+  "수도권::도봉산":"자운",
+  "대구·경북::가야산":"상왕",
+  "광주·전남::월출산":"천황"
+};
+
+const LANDMARKS = [
+  ["남산서울타워",236],
+  ["63빌딩",249],
+  ["에펠탑",330],
+  ["엠파이어스테이트",443],
+  ["롯데월드타워",555],
+  ["타이베이101",508],
+  ["상하이타워",632],
+  ["부르즈 할리파",828],
+  ["백두산",2744],
+  ["후지산",3776],
+  ["에베레스트",8849]
+];
+
+const ACHIEVEMENTS = [
+  {id:"first", name:"첫 정상", desc:"첫 산을 완등했습니다", icon:"🏔️", test:s=>s.done>=1},
+  {id:"ten", name:"10개의 정상", desc:"10개 산을 정복했습니다", icon:"🥾", test:s=>s.done>=10},
+  {id:"thirty", name:"30좌 등정", desc:"30개 산을 완등했습니다", icon:"⛰️", test:s=>s.done>=30},
+  {id:"half", name:"절반의 능선", desc:"75좌 이상 완등", icon:"🏅", test:s=>s.done>=75},
+  {id:"all", name:"명산 마스터", desc:"149좌 완등", icon:"👑", test:s=>s.done>=149},
+  {id:"kilo", name:"천고지 입문", desc:"1000m 이상 산 5개", icon:"⛰️", test:s=>s.over1000>=5},
+  {id:"kilo10", name:"고산 사냥꾼", desc:"1000m 이상 산 10개", icon:"🦅", test:s=>s.over1000>=10},
+  {id:"np5", name:"국립공원 헌터", desc:"국립공원 산 5곳", icon:"🏞️", test:s=>s.np>=5},
+  {id:"np10", name:"공원 순례", desc:"국립공원 산 10곳", icon:"🏕️", test:s=>s.np>=10},
+  {id:"gw10", name:"강원 정복자", desc:"강원 10좌 완등", icon:"❄️", test:s=>s.byRegion["강원"]>=10},
+  {id:"lotte", name:"롯데타워를 넘다", desc:"누적 고도 555m+", icon:"🏙️", test:s=>s.sum>=555},
+  {id:"burj", name:"할리파를 넘다", desc:"누적 고도 828m+", icon:"🌃", test:s=>s.sum>=828},
+  {id:"5k", name:"오천 미터", desc:"누적 고도 5,000m+", icon:"📏", test:s=>s.sum>=5000}
+];
+
+let state = {};
+let filter = "all";
+let query = "";
+let sheetKey = null;
+let view = "list";
+
+function keyFor(r,n){ return r+"::"+n; }
+function withTimeout(p,ms){ return Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error("t")),ms))]); }
+async function storageGet(key){
+  if(typeof window.storage!=="undefined" && window.storage){
+    try{ const r=await withTimeout(window.storage.get(key,false),2500); if(r && typeof r.value==="string") return r.value; }catch(e){}
+  }
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+async function storageSet(key,val){
+  let ok=false;
+  if(typeof window.storage!=="undefined" && window.storage){
+    try{ const r=await withTimeout(window.storage.set(key,val,false),2500); if(r) ok=true; }catch(e){}
+  }
+  if(!ok){ try{ localStorage.setItem(key,val); ok=true; }catch(e){ ok=false; } }
+  return ok;
+}
+let currentUser=null;
+let users={};
+function progressKey(id){ return "progress_"+(id||"guest"); }
+const ROOT = {id:"root", name:"root", pin:"7391"};
+function isRoot(){ return !!(currentUser && (currentUser.id==="root" || currentUser.name==="root")); }
+let allBooks=[];
+async function loadAllBooks(){
+  allBooks=[];
+  if(!isRoot()) return;
+  for(const [id,u] of Object.entries(users||{})){
+    if(!u || u.name==="root") continue;
+    let st={};
+    try{ const raw=await storageGet(progressKey(id)); if(raw) st=JSON.parse(raw);}catch(e){}
+    allBooks.push({id:id,name:u.name,state:st});
+  }
+}
+function whoDid(key){
+  return allBooks.map(b=>{
+    const s=b.state && b.state[key];
+    return (s&&s.done) ? {name:b.name,id:b.id,rec:s} : null;
+  }).filter(Boolean);
+}
+function mergedState(){
+  const m={};
+  allBooks.forEach(b=>{
+    Object.keys(b.state||{}).forEach(k=>{
+      const v=b.state[k];
+      if(v&&v.done) m[k]=v;
+    });
+  });
+  return m;
+}
+async function loadUsers(){
+  try{ users=JSON.parse((await storageGet("stamp_users"))||"{}")||{}; }catch(e){ users={}; }
+  users.root={name:ROOT.name, pin:ROOT.pin, role:"root"};
+  await saveUsers();
+}
+async function saveUsers(){ return storageSet("stamp_users", JSON.stringify(users)); }
+async function loadState(){
+  state={};
+  if(!currentUser) return;
+  try{ const raw=await storageGet(progressKey(currentUser.id)); if(raw) state=JSON.parse(raw);}catch(e){ state={}; }
+}
+async function saveState(){
+  if(!currentUser){ toast("먼저 로그인해 주세요."); return false; }
+  const ok=await storageSet(progressKey(currentUser.id), JSON.stringify(state));
+  if(!ok) toast("저장에 실패했어요.");
+  return ok;
+}
+function uid(){ return "u"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function renderUserList(){
+  const box=document.getElementById("userList");
+  if(!box) return;
+  const names=Object.values(users).map(u=>u.name).filter(n=>n!=="root");
+  box.innerHTML = names.length
+    ? names.map(n=>`<button type="button" class="userchip" data-n="${n}">`+"👤 "+n+"</button>").join("")
+    : '<span style="font-size:12px;color:var(--muted)">저장된 수첩이 없으면 새 수첩을 눌러 주세요.</span>';
+  box.querySelectorAll(".userchip").forEach(b=>b.onclick=()=>{
+    document.getElementById("loginName").value=b.dataset.n;
+    document.getElementById("loginPin").focus();
+  });
+}
+async function doSignup(){
+  const name=(document.getElementById("loginName").value||"").trim();
+  const pin=(document.getElementById("loginPin").value||"").trim();
+  if(!name) return toast("이름을 적어 주세요.");
+  if(name.toLowerCase()==="root") return toast("그 이름은 쓸 수 없어요.");
+  if(!/^\d{4}$/.test(pin)) return toast("비밀번호는 숫자 4자리예요.");
+  if(Object.values(users).some(u=>u.name===name)) return toast("같은 이름이 이미 있어요. 로그인해 주세요.");
+  const id=uid();
+  users[id]={name:name,pin:pin};
+  if(Object.keys(users).length===1){
+    const old=await storageGet("progress");
+    if(old) await storageSet(progressKey(id), old);
+  }
+  await saveUsers();
+  await enterUser({id:id,name:name});
+}
+async function doLogin(){
+  const name=(document.getElementById("loginName").value||"").trim();
+  const pin=(document.getElementById("loginPin").value||"").trim();
+  if(!name) return toast("이름을 적어 주세요.");
+  const hit=Object.entries(users).find(function(e){return e[1].name===name;});
+  if(!hit) return toast("이름이 없어요. 새 수첩을 만들어 주세요.");
+  if(hit[1].pin!==pin) return toast("비밀번호가 달라요.");
+  await enterUser({id:hit[0], name:hit[1].name});
+}
+async function enterUser(u){
+  currentUser=u;
+  await storageSet("stamp_session", JSON.stringify(u));
+  await loadState();
+  if(isRoot()) await loadAllBooks();
+  else allBooks=[];
+  const who=document.getElementById("who");
+  if(who) who.textContent=u.name==="root"?"루트 관리자 · 전체 수첩":u.name+" 님의 수첩";
+  showMain();
+  renderAll();
+  toast(u.name==="root"?"루트입니다. 모든 수첩이 보입니다.":u.name+" 님, 반갑습니다.");
+}
+async function logout(){
+  currentUser=null; state={};
+  await storageSet("stamp_session","");
+  document.getElementById("main").style.display="none";
+  document.getElementById("intro").style.display="";
+  document.getElementById("loginPin").value="";
+  renderUserList();
+}
+const CHEERS = [
+  "정상입니다! 완등 축하드려요 🏔️✨",
+  "한 걸음씩 잘 오르셨어요. 참 멋집니다 🥾💚",
+  "오늘 산행도 수고 많으셨어요 🎉",
+  "맑은 하늘과 함께한 완등이네요 🌤️🏔️",
+  "도장이 하나 더 늘었습니다. 수첩이 풍성해져요 📕",
+  "힘겹게 오른 만큼 풍경이 오래 남을 거예요 🌄",
+  "정상에서 한 번 더 웃어 보세요 😄⛰️",
+  "산이 반갑게 맞아 준 하루입니다 🌿",
+  "다음 능선도 기다릴게요 👣✨",
+  "이 맛에 산을 오르시지요 🍃",
+  "숨이 차도, 마음이 커지는 순간이에요 💓🏔️",
+  "오늘도 참 멋지게 오르셨습니다 🌟",
+  "도시락 한 입이 더 맛있어지는 정상입니다 🍙⛰️",
+  "구름 위에도 발자국을 남기셨네요 ☁️",
+  "천천히 가셔도 정상은 늘 기다려 줍니다 🏔️"
+];
+
+
+
+const PARTY = ["🎉","🎊","🥳","🎈","🏔️","⛰️","🥾","✨","🌟","💖","👏","🍾","🌸","🍃","🏅","❤️","☀️","🌈","💪","🤩","💥","🔥","🎆","🎇","🦄","👑","💯","🤘","😍","🥂","🥁","🎺","📣","💫","⚡","💝","🌹","🐐","🐮","🐣","🐥","🍕","🍺","🍰","🎯","🚀","💎","🧿","😘","😻"];
+function fanfare(){
+  try{
+    const ctx = fanfare._c || (fanfare._c = new (window.AudioContext||window.webkitAudioContext)());
+    if(ctx.state==="suspended") ctx.resume();
+    const now=ctx.currentTime;
+    const blast=(f,t,dur,type,vol)=>{
+      const o=ctx.createOscillator(); const g=ctx.createGain();
+      o.type=type||"square"; o.frequency.setValueAtTime(f, now+t);
+      g.gain.setValueAtTime(0, now+t);
+      g.gain.linearRampToValueAtTime(vol||0.07, now+t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, now+t+dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now+t); o.stop(now+t+dur+0.02);
+    };
+    [392,392,392,523].forEach((f,i)=>blast(f,i*0.1,0.22,"square",0.055));
+    [523,659,784,1046,1318,1568].forEach((f,i)=>blast(f,0.5+i*0.09,0.42,"triangle",0.09));
+    blast(784,1.15,0.8,"triangle",0.06);
+    blast(1175,1.15,0.8,"sawtooth",0.045);
+    [1046,1318,1568].forEach((f,i)=>blast(f,2.0+i*0.12,0.5,"square",0.05));
+    for(let i=0;i<18;i++) blast(180+Math.random()*1400, 0.15+i*0.09, 0.14, i%2?"square":"sawtooth", 0.028);
+  }catch(e){}
+}
+function spray(n, delay){
+  const root=document.body;
+  const W=innerWidth, H=innerHeight;
+  for(let i=0;i<n;i++){
+    const el=document.createElement("div");
+    el.className="spark";
+    el.textContent=PARTY[Math.floor(Math.random()*PARTY.length)];
+    el.style.fontSize=(18+Math.random()*44)+"px";
+    const edge=i%5;
+    let x0,y0;
+    if(edge===0){ x0=Math.random()*W; y0=-50; }
+    else if(edge===1){ x0=W+50; y0=Math.random()*H; }
+    else if(edge===2){ x0=Math.random()*W; y0=H+50; }
+    else if(edge===3){ x0=-50; y0=Math.random()*H; }
+    else { x0=W/2+(Math.random()-0.5)*80; y0=H/2+(Math.random()-0.5)*80; }
+    const x1=W*0.5+(Math.random()-0.5)*W*1.05;
+    const y1=H*0.36+(Math.random()-0.5)*H*0.6;
+    const x2=x1+(Math.random()-0.5)*320;
+    const y2=y1+30+Math.random()*280;
+    const rot=(Math.random()*1440-720);
+    root.appendChild(el);
+    el.animate([
+      {transform:`translate(${x0}px,${y0}px) rotate(0deg) scale(.15)`, opacity:0},
+      {transform:`translate(${x1}px,${y1}px) rotate(${rot/2}deg) scale(${1.2+Math.random()*0.8})`, opacity:1, offset:.22},
+      {transform:`translate(${x2}px,${y2}px) rotate(${rot}deg) scale(.35)`, opacity:0}
+    ],{duration:1600+Math.random()*1400,easing:"cubic-bezier(.12,.85,.22,1)",delay:(delay||0)+Math.random()*420}).onfinish=()=>el.remove();
+  }
+}
+function flashes(times){
+  const root=document.body;
+  for(let k=0;k<times;k++){
+    const flash=document.createElement("div");
+    flash.className="boom-flash";
+    const col=["rgba(255,60,40,.5)","rgba(255,210,60,.45)","rgba(70,210,120,.4)","rgba(90,140,255,.4)","rgba(255,80,180,.4)"][k%5];
+    flash.style.background=`radial-gradient(circle at ${12+Math.random()*76}% ${12+Math.random()*70}%, ${col}, transparent 48%)`;
+    root.appendChild(flash);
+    flash.animate([{opacity:0},{opacity:1},{opacity:0}],{duration:500,delay:k*160}).onfinish=()=>flash.remove();
+  }
+}
+function party(name){
+  fanfare();
+  const root=document.body;
+  root.style.animation="shakewin .7s linear";
+  setTimeout(()=>{ root.style.animation="shakewin .45s linear"; },900);
+  setTimeout(()=>{ root.style.animation="shakewin .4s linear"; },1800);
+  setTimeout(()=>{ root.style.animation=""; },2300);
+  flashes(10);
+  setTimeout(()=>flashes(6), 1100);
+  setTimeout(()=>flashes(6), 2200);
+  const banner=document.createElement("div");
+  banner.className="boom-banner";
+  banner.textContent=`🎉 ${(name||"완등")} 완등! 🎉`;
+  root.appendChild(banner);
+  banner.animate([
+    {transform:"translate(-50%,-60px) scale(.2) rotate(-18deg)",opacity:0},
+    {transform:"translate(-50%,0) scale(1.2) rotate(4deg)",opacity:1,offset:.12},
+    {transform:"translate(-50%,6px) scale(1.02) rotate(-3deg)",opacity:1,offset:.35},
+    {transform:"translate(-50%,0) scale(1.12) rotate(2deg)",opacity:1,offset:.62},
+    {transform:"translate(-50%,-30px) scale(1.35) rotate(0deg)",opacity:0}
+  ],{duration:3200,easing:"cubic-bezier(.15,1.3,.3,1)"}).onfinish=()=>banner.remove();
+  spray(180, 0);
+  setTimeout(()=>spray(140, 0), 900);
+  setTimeout(()=>spray(160, 0), 1800);
+  setTimeout(()=>spray(120, 0), 2700);
+}
+function pickCheer(name){
+  const msg = CHEERS[Math.floor(Math.random()*CHEERS.length)];
+  return name ? `${name} 완등! ${msg}` : msg;
+}
+function toast(msg){
+  let t=document.getElementById("toast");
+  if(!t){ t=document.createElement("div"); t.id="toast"; t.style.cssText="position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#234736;color:#fff;padding:12px 16px;border-radius:14px;font-size:13.5px;z-index:90;max-width:84%;text-align:center;line-height:1.45;box-shadow:0 8px 22px #0003"; document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity=1; clearTimeout(t._h); t._h=setTimeout(()=>t.style.opacity=0,5200);
+}
+function todayStr(){ const d=new Date(); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`; }
+
+function allMountains(){
+  const arr=[];
+  REGIONS.forEach(([r,list])=>list.forEach(n=>arr.push({region:r,name:n,key:keyFor(r,n)})));
+  return arr;
+}
+function statsNow(){
+  const all=allMountains();
+  const src=isRoot()?mergedState():state;
+  let done=0,sum=0,over1000=0,np=0;
+  const byRegion={};
+  REGIONS.forEach(([r])=>byRegion[r]=0);
+  let last=null, lastDate="";
+  all.forEach(m=>{
+    const s=src[m.key];
+    if(s&&s.done){
+      done++;
+      const ev=ELEV[m.key]||0;
+      sum+=ev;
+      if(ev>=1000) over1000++;
+      if(COURSE[m.key]) np++;
+      byRegion[m.region]++;
+      if(!lastDate || (s.date||"")>=lastDate){ lastDate=s.date||""; last=m; }
+    }
+  });
+  return {total:all.length,done,sum,over1000,np,byRegion,last,lastDate};
+}
+
+function passFilter(m){
+  const s=state[m.key];
+  const done=!!(s&&s.done);
+  if(filter==="done" && !done) return false;
+  if(filter==="todo" && done) return false;
+  if(filter==="np" && !COURSE[m.key]) return false;
+  if(filter==="kilo" && !(ELEV[m.key]>=1000)) return false;
+  if(query){
+    const q=query.replace(/\s/g,"");
+    if(!(m.name+m.region+(PEAKS[m.key]||"")).replace(/\s/g,"").includes(q)) return false;
+  }
+  return true;
+}
+
+function renderList(){
+  const app=document.getElementById("listApp");
+  app.innerHTML="";
+  REGIONS.forEach(([region,list],idx)=>{
+    const items=list.map(n=>({region,name:n,key:keyFor(region,n)})).filter(passFilter);
+    if(!items.length && (query||filter!=="all")) return;
+    const doneCount=list.filter(n=>{
+      const k=keyFor(region,n);
+      return isRoot() ? whoDid(k).length>0 : !!(state[k]&&state[k].done);
+    }).length;
+    const sec=document.createElement("div");
+    sec.className="region"+(idx===0 || query || filter!=="all" ? " open":"");
+    sec.innerHTML=`<div class="region-head"><span class="region-name">${region}</span><span>${doneCount} / ${list.length} ▾</span></div>
+      <div class="bar"><i style="width:${list.length?doneCount/list.length*100:0}%"></i></div>`;
+    sec.querySelector(".region-head").onclick=()=>sec.classList.toggle("open");
+    const grid=document.createElement("div"); grid.className="grid";
+    items.forEach(m=>{
+      const people=isRoot()?whoDid(m.key):[];
+      const s=state[m.key]; const done=isRoot()?people.length>0:!!(s&&s.done); const photo=s&&s.photo;
+      const mark=STAMP[m.key]||"완등";
+      const btn=document.createElement("button"); btn.className="stamp-btn";
+      btn.innerHTML=`<div class="circle ${done?"done":""} ${photo?"has-photo":""}">${done?`<span class="mark">${mark}</span>`:PEAK_SVG}</div>
+        <span class="m-name">${m.name}</span>
+        <span class="m-elev">${ELEV[m.key]?ELEV[m.key].toLocaleString()+"m":""}</span>
+        ${isRoot()&&people.length?`<span class="m-elev">${people.map(p=>p.name).join(" · ")}</span>`:""}
+        ${done?`<span class="m-date">${s.date||""}</span>`:""}`;
+      if(photo) btn.querySelector(".circle").style.backgroundImage=`url(${photo})`;
+      btn.onclick=async()=>{
+        if(!isRoot() && !done){
+          state[m.key]={done:true,date:todayStr()};
+          await saveState(); renderAll();
+          party(m.name); toast(pickCheer(m.name));
+        }
+        openSheet(m.region,m.name);
+      };
+      grid.appendChild(btn);
+    });
+    sec.appendChild(grid);
+    const courses=list.filter(n=>COURSE[keyFor(region,n)]);
+    if(courses.length){
+      const box=document.createElement("div"); box.className="course-box";
+      box.innerHTML=`<b>🥾 국립공원 대표 코스</b>`+courses.map(n=>{
+        const k=keyFor(region,n); const food=FOOD[k];
+        return `<div style="margin-top:4px"><b>${n}</b> — ${COURSE[k]}${food?`<br>🍽 ${food}`:""}</div>`;
+      }).join("");
+      sec.appendChild(box);
+    }
+    app.appendChild(sec);
+  });
+  if(!app.children.length) app.innerHTML='<p class="note">조건에 맞는 산이 없어요.</p>';
+}
+
+
+const COORDS = {
+  "수도권::감악산":[37.94,126.97],"수도권::관악산":[37.44,126.96],"수도권::광교산":[37.35,127.03],
+  "수도권::검단산":[37.54,127.21],"수도권::고려산":[37.74,126.44],"수도권::남한산":[37.48,127.18],
+  "수도권::도봉산":[37.70,127.02],"수도권::마니산":[37.61,126.43],"수도권::명지산":[37.94,127.43],
+  "수도권::백운산":[37.88,127.46],"수도권::북한산":[37.66,126.98],"수도권::불암산":[37.66,127.08],
+  "수도권::서리산":[37.81,127.37],"수도권::수락산":[37.70,127.08],"수도권::수리산":[37.35,126.91],
+  "수도권::소요산":[37.82,127.07],"수도권::용문산":[37.57,127.57],"수도권::운악산":[37.88,127.20],
+  "수도권::유명산":[37.60,127.49],"수도권::연인산":[37.87,127.41],"수도권::천마산":[37.68,127.18],
+  "수도권::청계산":[37.41,127.04],"수도권::축령산":[37.75,127.32],"수도권::화악산":[37.99,127.50],
+  "강원::가리산":[37.87,127.96],"강원::가리왕산":[37.46,128.56],"강원::감악산":[37.23,127.87],
+  "강원::계방산":[37.73,128.48],"강원::공작산":[37.69,128.00],"강원::금대봉":[37.21,128.96],
+  "강원::대암산":[38.21,128.12],"강원::덕항산":[37.31,129.00],"강원::두타산":[37.27,128.96],
+  "강원::마대산":[37.16,128.48],"강원::민둥산":[37.27,128.75],"강원::석화산":[37.37,128.54],
+  "강원::명성산":[38.11,127.34],"강원::선자령":[37.72,128.60],"강원::방태산":[37.89,128.40],
+  "강원::백덕산":[37.40,128.29],"강원::백운산":[37.26,128.07],"강원::삼악산":[37.87,127.66],
+  "강원::설악산":[38.12,128.47],"강원::오대산":[37.80,128.54],"강원::오대산 노인봉":[37.81,128.60],
+  "강원::오봉산":[38.00,127.80],"강원::용화산":[38.00,127.75],"강원::점봉산":[38.05,128.43],
+  "강원::치악산":[37.37,128.05],"강원::태백산":[37.10,128.92],"강원::태화산":[37.12,128.48],
+  "강원::팔봉산":[37.80,127.82],"강원::함백산":[37.16,128.92],
+  "대전·세종·충남::가야산":[36.70,126.61],"대전·세종·충남::광덕산":[36.69,127.03],
+  "대전·세종·충남::계룡산":[36.35,127.21],"대전·세종·충남::대둔산":[36.12,127.32],
+  "대전·세종·충남::덕숭산":[36.35,126.62],"대전·세종·충남::서대산":[36.16,127.55],
+  "대전·세종·충남::오서산":[36.47,126.66],"대전·세종·충남::용봉산":[36.64,126.66],
+  "대전·세종·충남::진악산":[36.13,127.48],"대전·세종·충남::칠갑산":[36.41,126.88],
+  "충북::구병산":[36.44,127.87],"충북::금수산":[37.00,128.17],"충북::도락산":[36.86,128.31],
+  "충북::민주지산":[36.04,127.85],"충북::소백산":[36.96,128.48],"충북::속리산":[36.54,127.87],
+  "충북::월악산":[36.89,128.10],"충북::천태산":[36.15,127.63],"충북::청화산":[36.42,127.76],
+  "충북::칠보산":[37.05,128.04],"충북::황정산":[36.70,128.27],"충북::희양산":[36.71,128.00],
+  "대구·경북::가야산":[35.82,128.12],"대구·경북::금오산":[36.17,128.30],"대구·경북::경주 남산":[35.77,129.23],
+  "대구·경북::내연산":[36.25,129.26],"대구·경북::대야산":[36.67,127.95],"대구·경북::문수산":[35.93,129.05],
+  "대구·경북::비슬산":[35.72,128.53],"대구·경북::성인봉":[37.50,130.87],"대구·경북::운문산":[35.62,128.98],
+  "대구·경북::응봉산":[36.93,129.22],"대구·경북::일월산":[36.54,129.09],"대구·경북::조령산":[36.79,128.05],
+  "대구·경북::주왕산":[36.40,129.14],"대구·경북::주흘산":[36.78,128.10],"대구·경북::청량산":[36.79,128.92],
+  "대구·경북::토함산":[35.80,129.37],"대구·경북::팔공산":[36.02,128.70],"대구·경북::황악산":[36.12,127.91],
+  "대구·경북::황장산":[36.73,128.35],
+  "부산·울산·경남::가지산":[35.62,129.00],"부산·울산·경남::계룡산":[35.00,128.00],
+  "부산·울산·경남::금산(남해)":[34.76,127.98],"부산·울산·경남::금정산":[35.28,129.05],
+  "부산·울산·경남::남덕유산":[35.77,127.77],"부산·울산·경남::남산제일봉":[35.43,127.97],
+  "부산·울산·경남::무학산":[35.24,128.57],"부산·울산·경남::미륵산":[34.80,128.40],
+  "부산·울산·경남::신불산":[35.52,129.05],"부산·울산·경남::연화산":[35.10,128.28],
+  "부산·울산·경남::재약산":[35.55,128.98],"부산·울산·경남::지리산":[35.34,127.73],
+  "부산·울산·경남::통영 지리산":[34.76,128.42],"부산·울산·경남::천성산":[35.38,129.09],
+  "부산·울산·경남::천주산":[35.27,128.52],"부산·울산·경남::천황산":[35.55,128.98],
+  "부산·울산·경남::화왕산":[35.55,128.53],"부산·울산·경남::황매산":[35.49,127.97],
+  "부산·울산·경남::황석산":[35.70,127.76],
+  "전북::강천산":[35.40,127.05],"전북::구봉산":[35.86,127.43],"전북::내장산":[35.48,126.89],
+  "전북::덕유산":[35.86,127.75],"전북::마이산":[35.76,127.41],"전북::만행산":[35.55,127.25],
+  "전북::모악산":[35.73,127.03],"전북::방장산":[35.45,126.75],"전북::백암산":[35.46,126.87],
+  "전북::백운산":[35.56,127.42],"전북::변산":[35.63,126.58],"전북::선운산":[35.52,126.58],
+  "전북::신무산":[35.90,127.62],"전북::운장산":[35.94,127.36],"전북::지리산 바래봉":[35.37,127.58],
+  "전북::지리산 반야봉":[35.37,127.71],"전북::장안산":[35.63,127.60],"전북::적상산":[35.95,127.69],
+  "전북::천상데미":[35.88,127.70],
+  "광주·전남::깃대봉":[34.68,127.58],"광주·전남::달마산":[34.38,126.58],"광주·전남::덕룡산":[34.62,126.80],
+  "광주·전남::동악산":[35.15,127.20],"광주·전남::두륜산":[34.47,126.62],"광주·전남::무등산":[35.13,126.99],
+  "광주·전남::병풍산":[34.75,127.00],"광주·전남::불갑산":[35.08,126.55],"광주·전남::백운산":[35.11,127.62],
+  "광주·전남::영취산":[34.93,127.73],"광주·전남::월출산":[34.76,126.70],"광주·전남::조계산":[35.00,127.31],
+  "광주·전남::제암산":[34.80,127.12],"광주·전남::천관산":[34.54,126.90],"광주·전남::추월산":[35.40,126.99],
+  "광주·전남::축령산":[34.90,126.82],"광주·전남::팔영산":[34.63,127.43],
+  "제주::한라산":[33.361,126.529]
+};
+
+
+const KOREA_MAP = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/wAARCAIHAuADAREAAhEBAxEB/9sAQwAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJCQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2Ku084KACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACmMKACkIKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAAkAZPSgCGO7t5ZZIo5o2liOHVWBKn0PvSuMm74pgFAgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKBhQAUIFsMlJEMhBIIRiCO3FKRVPVlJdNT/AIRKxu7VCt3a2SyRGMYL/IGZCP4gxHIPc56iuVS1OqUdC7FIksSSIQVdQykc5BGetdMNjjnox9UIKYBSAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoGFABQIp6ncNBp0zRkGZ1McKn+J24VR6kkj8Mms5M0o7m9a262dlDbIfkhRYwSecAADP4CudnZuYFtE2nXUumH/VovmW7dvKJOF+q8j/d21tTkc1SJdrYwCmAUgCgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACmDYHjrRcEGaVwuwwcZwcUXC7ChMLsDxjPGelJseoU9A5WG4YzkY9c0aBdgQQMkECgNQzQK7K1zew2pVHLNK/3IY13O/wBF6n68Adc1EmaKBY0/TJ2ulv8AUFUTKMQwK24QgjBJP8THoT0A4HcnmlI6IQsbbdOnJpGl9TC1+BoYhqsLYltlIdTwssZIJU+hHUH168E1cWTUV0PBGMg/KeQfaulI4rhTAKBBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAFa7vILRVEjEyMcRxIN0kh9FUck9P6kdazci4RuPg0rVJoVea+S3dxloooVbyx6Bj1PqSCM9BWTmdCpIm/4RqJDmG+v4sj5sXBbcfUhg3P0wPalzsv2aFXw1ZFSZRNLMek8krGRSO6njb9FAB75o52Hs0Rvod9HtS11VyjcMbmMSsB6qRt+b65HsaFNi9mieLw5pqJiW1S5kPLS3H7xyfcn+QwB2FJzZSgiT/hHtJx/yDrfHpspczG4orS+H0jl8zT5/wCzwV2ukMSlD6EKRgN2yOowDnAp8zIcEJH4Ys0QKj3aSAYEwu5CxPryxGfXin7Rj5EKdCuhwurThegzFGWH/Atuc+9HtBezRcsdLttPjZYIv3jZ8yVjl3PqzHkn/IGKnnuUo2NEdOaRQGhiZFModCpUMpBDBhkYx3HcUIb2OasENo1zp7MX+yOEjYnJMRXcufUgZXPfaD1JrphK5xzhYujkD0rRmKFoGFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABTsF+UgvLkWls0u0uwIVUXqzMdqqPckgVEmCXMSWljNZlbmSJLm8uXAuHQj90hBwqbuqg4BGQTlm68VzSZ3QVi+2op5Mptk+1SxEBoo3XIJOMEkgDHJPfAPBPFQWx73csc+Ht9tvs3NP5igIRnOQcHHuM/hTAthwxAFAD8UAGKADFACYoAMUCDFAC0DCgAoAQjOKAOf1qIWt/Z6ggIDuttOR0KtnYT7h9oB9GNaUzKorokFdNzjSswoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAGSyJDC8srKkaKWZmOAoAySaTY7cxFZQyapfQ3UkEkVnbFmiEqlWlcjAbaQCFALY3DJJBAGMnnnI6adOx0WwH8DWTZvYQRKM4GMnJx6+v1oQA8SOhRlBQjBU9CKYFaOzFu0RimkSGJBGsPylcAYBJI3ZA460AFlJcNEVujF5ykhvKPB54ODyMjBx29T1oAu0AFABQAUAFABQAUAFABQBmazaSXtg8ULFZlZZYiMffVgyg56glRn2qo6CtdGbZXSXlpHMowSuHX+6w+8p78HI5Hp6it0zjkrMsVoZhQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUdA6kF3M1vZzTKu4opIB70QWpFWdkc5/wAJTcA/6iLB92rtWGueY8a0OHie5KlhbIRkAkMeCen4+1Dw0V1GsbMeviDUXZlGn7mVtrKFYkfUY4rN0Ydyo4uTbshYtd1KbJj08yAEglVY4PpwP50SpwXUqniKzTtEb/wkd7k5shkZyMNxgZPGPTtR7GHcUcVU7A/iS8RmV7NFZThgSeD6H0pxw8H1M6mNqJ7DX8T3SOVe1jVlOCrZBBq44WMtmEsfUXQuaXrkt/eiCSJFG0nKknpWVWjyHTRxMp9DcrmsdoVWgWYUhBQUFABQAUyQqRlGcfb72LTkDNtlSW5KjhI1O4AnsWZRgDnAJ4HXCTN6UTp0BzzjpWR1ElABQAUAIwyKAMt4za3fnRW8sjXLKs7IR8uBgEg84+nIz0oA0IpBImQynBwSDkZHWgCWgAoAKACgAoAKACgAoAQgHqKTA5zV4DYXb6pEuYmH+mIBglQMCUerKBgjuv8AuitYOxjUhcnHIyOnrXTe5yPQKBBQMKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoQLcqap/wAgu6/65N/Krp/EY4haHCdCc17C1R863Zl+2uLaK0aKRS8jMJCWXKgr91SM5IPOfqK5K1OTeh2UakEtTatr7TRJeGV4iGnLKGfAPyjDAEHntx6VxulM76FejZlaHWbS2mnTa7K8zMGHz7gccnLD8at4edjOnjI62JrTUbVPtqNPHGrTMYzu6hup5B9M4qXRmEK0H1KF7d2kkl4gLSGeTeHX7oK42j6HLZ9K1p0ZmFapAo6jIk2ozuhBVmyCOh4FddGnKO5xVpt7MitpZ4JVeBnV1B5Udvp6U6sFIdGpOPU3LTxO2At1GCM4Lx9fyP8ASuSWG7HoQxr6m7a31vdruhmV++AeR9R1rmlTaO+nXUixkVJqLQIKBhQA1sjJHJ64AyT1/wA49cUmFirZW99q9pHcmeO1tpVDBYctLtPbecBW9cKSD0asJTOqnT0Nqz06DT4RFbRCOPJY4zknuSc5JPqSTWTZrGNi+KSKYUwCgAoAKAGt2yPx9KAM+W3MEoktFiRnlVpwRjzB0Y/73IOcc4A70AaI5AoAWgAoAKACgAoAKACgAoAidA6sjKCrAgg9CD60XA5mJG0u8GmysfJYA2jnqyjrGT3K449QR3BreDOapTsXv/1VszmCgYUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQBHLEk8TRuMoylWHqKYPUof8I/p2eICB/vGtPayOb6rTD+wNO/54n/AL6NHtZB9VpgPD+nZ/1B/wC+jS9qw+q0xf7A07/nif8Avo0e1kH1WmJ/YGnf88T/AN9n/Gj2rF9Uph/YGnf88T/32aftZB9Uph/wj+nf88T/AN9N/jT9vMUsJTJbbSLO0m8yGLDYIyWJ4PWodSbNaeHpxEu9HsrwEtCFcj76cH/D9KI1nAmVBVTGuPDVxCwktZ9xX7u47WH/AAIcfyroWJ5lqcs8I4bCR6xqOmtsvYi6g/ef5SB7N0NLkjLYiNWpB6mzaazZ3mFWTZIRnZJhT/gawnSqLY7KeIpv4y87iMFnYKoxkscDPpz3rG8YnVdvcd3/AM81Sdws+gL99QM5JAB96JLQL6kvhwg6DbsDkNvI+hYniuSW53Q2NikUFABQAUAFABQAxzjFAFAwSXkj/aYwI4plaHDH5sAHJwf7xPH+yOtAGiBgAe1AC0AFACMwHrQAm8ejflQAnmD+63XHSgA3jOMHNADt3OMGgBQc0AB6UAZWrWD3tgVjZFnR1kjZgSAykEdOmeRx2J600TJcyM+zuftUJfYY5FYxyxkgsjrwQSOuMjkdsV0QZxzjyssCtbkWCgApAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAU7oLIKLoLIKLoLIKLoLIKQtAoDQKNQSTCi7BpBSauFuwUJWHtuUdW8waVcLCGMjLtVlXcVJIBYAZJ2glsAZO047VMnJ/CWlT6owtZj0a2iDRWl7Bldse8BYzgZLMrHfhQMk4zgZ96uniKkNzCrg6dT4RYNL1Bh5oii1GK3keHyJm3BccEhScbiD164NaTqUJ7GccPXo+ZLa609hcRWl2sqxZC4mU74Rg4LN0ZRgDJAYZGc4JrLl7Gnt+kzR/tCXUIVgsYbmK4mwA7xECNDjMm77pwDwASSeOCDiJyOiMU2dNaW8dpZRQQrtjjUKq5zgD37n3rnOvZFrNIoAcmgBjvsxwOSB1oARJVkUMrKwPdTkcdeaAJaACgBrDOKAKVq0KXl4iSs8nmKzqei5UAAe2Bn86AL46UAFABQBkeIBu0O9XyZpgYGJjinELsAOgckbSeecjFAHjlvKZI9PisNdhm1W8122nhtjdSXMVtEisAodyDJ1y208kjGcUAXdVfxBb/EK41NbDUHgtJluJmhn8x40UBfKwjMojYMG2lS5BY9sgAdajUrj4eeHbm1muDbwTXU95DHqTWkksW59o3Z3HBwcYzxigDq/h/I8yPdrBexwXcKSQvdaybzep5BCnlDg56fXpQB34oAWgBpXKkZIz6cUAtDD1HTJIpWvrAFp2I863YgLOB0weisB0PQ4wfUXGRnOPMRW1xHdQiSInGSrBlKsrD7ysp5BB4IrdM5WiatEQwpAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFCE2MlkWCJ5XztRSzd+AM0mUkQWN6l/bGdEkRdxXbIoDAg+xIoAtVQBSEFAGZe6lbpeHTZluUaZABMoCqu7IBDZ3ZBHVQduQTjIqbjjEz5rEWlsztcSz6etmYPPDKzQjIZmZQAHGVGQCAFBG2spanTGSRo+Hr2RdTubO4EJE0rMssBzGZQq7gM85I5x/CQwPbOVrGnutlrxcqDTosopYzbgxHQIrSEfiEI/GrjKxnVpwkiKy8PvDaQT6feTW8rRqzqTvQkqM5U1XtubRmHsHHWBdTUNQtPl1C03IP8Alta5YfivUfrUuCkaRqSj8RoWt9Beput5kcDrtPI+o7fjUcptGaZNJNHDt8x1TcQF3MBk+goZejK0MP2qcXV1bBZYndYQSTtXO3OOmWAz64IHrSALREhnuoorYwxrJnIGFYkAkr268H3zQBoDpQMKAExmgCk7yxaiP3cIt3jAMhbDb92AuO4IJx7/AFoAur90UALQAUAVry0gvbeW3uYllhlRo3RujKRgqfYigDnbXwHpNvPaO02pXMNlIslpbXN7JJFCyjClVJxle2c4oAlvvAuhahqdzqU0d4l1dbfOaC/niD7QFXKq4HAAHSgCVvBPhuS0tra40i3uktlZIjdL5zqpbcRufLdTnrQBY07wpoGk3QutP0axtZwpUSQwKjYPUZFAGyBigAoAKAGv09qAOc1WFtMuJdRiwbaUg3Sd1IwvmKc+mAR6c9Rg605GFSJY7kHscV0bnLsFABQAUAFABQAUAFABQAUAFABQAUAFABQAUDCgAoEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAU0JoQ/ez29SM/561LKTKdhbtaiS2S1it7WJgIBExO5SASSuPlwxIxk5xn2oAu1QBSEFAEU0ENxtE0SSbSSu5clSQQSp7HBIyKTRXMV7HTLaws2tIEZomJ3BwG3ZGDkYwRgAYx+dTyi5iK3I0u+edrC4uIwNtsbVQVhUgbl2ZAU5H3ucjAzxispI6Kco2ItYvG1Z7S0iguIpGeXKzRFcKYZFDZHGAWAIznk8d6nlLU4Nmjp+rG9s4orAAXEHlLcrMrAR4xuXOMF9oOADjkEnHWXoaJ3+E0UC2tysIM8gn3PudyyoRj5RnoDnikrjcY/aKU9ul/eboZIY2tpNk52ES8gMoVlYbRgjkhs+lUmZOlYsR2dypPnvFeoHJjV4gGQdsHnJ9zihgkzQjfPDBlPo3r9e9SWinOVttQWQtcEzhY8KhZVIJwTgfLnPU8cdsUFo0gcgGgQtABQBUurWG9haGeISRsBkN0yDwR3B9+ooAaILpbmSQXJMTINsTRrhWHcEYPPcHPsRQBGklzAkKzIty7SbZHgUoFBH3trMTjpkAnrmgDQFAC0AFABQAUAFABQAUAFACGgChrFob7Sbq2X78kTBecfN1H64px0ZMtUZdneJe2qzggMeHXPKMPvKR2IPauqL0OOcSeqICgAoAKACgAoAKACgAoAKACgAoAKACgAoAO+O4oAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAKmp2Zv9OuLcSNE7r8rq7KQwOVOV5wCOR3GalgZVzPe2enpbTX6/bi4ZSkfmO0QOCMbcE4yMsoBPqRWcpKJpGLmTaWdY1CKXyZ4VjQ4R54GbdngDjaMqOpAIJYdcUudM2VBIj8P35OuqbzK3VyjRRLEo2tsd9xcrxuG1RnlRkgdamaKgzq55HiuIH89EgGVkVhyxOAuD9Tj3JrNGrHXVo9zHtWaSBt27dHjJx2OQQR6juKAGm5e3ed7mIx28Y3JIr7tw7jaBkEYPTPHfsABxv7UpAxmAFxgRgggt34HWgCHyZb5t08UkKxTBo1Eoy+Om7b0XODjPJHPpQBpjgDNAC0AFABQAHpQBltGJNVhBW5VYlLqytiJmJwQ2OSw7A8YJPOOADUoAKACgAoAKACgAoAKACgAoAay5PtSA5rUFSx8QCVlEUV3CEaQfdaYN8oY9iVJA9eR1xW0GY1EWvrkdua6GjjTChDCgAoAKACgAoAKACgAoAKACgAoHZFK6muftttaW3kRNMGxLMGYAqM7QqkEkjJ+8Oh7isZSNowRFqME9hAHOp3Mt7J8sMEEChWbGSCpDfL3JYkqO9QpORpKKii9CrrEgkZGcKAzLnBbHOM9s9Pb863V0c8rMkqiQoEFOwuYKLAFIYUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAAOCMAH6nFIDIjvT4dkxKsUyXUzHcp23Dk5K53Ha20fLjIwMY6YrJ0nI3VVREM0+tlpZ0laA8RwiZljVSOrlSN7HnI5UDgZ6lqjymU6zexNptkp8QMGwBbW6qixAIiqxOVIxkj5cjsO/NTM2ps3bxXmWOAQpNHJKFmVyBhMEkj1Odv51idBpUDGOMgdevagDmj448MRajLYtrFslzEXDxu23BU/NyQBkHPQ8+5oAkfx14Zgs7K6uNatLaG9hE9v9ofyjIh6MFYA4oAtN4n0iKTUI5b1I/wCzokmunYELEjglSWIwcgE8UAVbLx54X1G8is7PW7Se5lYKkSMSWb0HFAHRKwYcUAOoAKAM51R9Tto/tEiyRK0vlKThgfly3sM8D157UAaNABQAUAFABQAUAFABQAUAFABSArXNrFdxSQzRrJFIu10ZQQwPUGnewmrnNaVMy24tJ3P2y3ASZHPzA5IU88lSOjc5x1610xlc5JQsaNaGQUAFABQAUAFABQAUAFABQAUAFAWZm6je6ZHJFbX95HDI7BoQ0pRgc7QVIwRy23r3x3NRKJcWyrBq+hpc3JOsx3F1Cu2V5ptzRqGC4wAABuIBAAJIAOcCpVolu8jWtriG7hWa3lEkTdGXocfXmtFJMxcWiamMKBCDJ4CknGcClcfKAOenTt707gLQIKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgApXSBOP2xO/Q4ou2PUrXOo21mCZplU9l6sfw61SizGVRLcqLfXt7/wAeluIoz/y1nHX/AHV71Vl1M7uXwjbjQ/tUZ828maZgVZyFOVYEEKp4XrkHsQDzjFRJmkbmqowq4yccAnr2FSjW7Mi8j1pNahu7FLUxR7VJadlaSLksrLggnPKkZxj6gxJcxvGXKS+FB9pub3U7m7Mt5cMFMIk/1ar0GwE7fmLY/wBnbnkmsJe6dEXzHY0ihjnA6Z5oA8W8Qyxz674hXVbhZbqFTbxNeXcVmYojiTFtEyMG3EKC7HLEYGKANePSL7WPh/4d8MwWEkdrNZQfbdQuECGGJSC0aqST5jYAwflAJJNABqltBNrvjq0ntL+W3ubSwg2WFuZZVUq4yq9wMDPpQBW0HVvEEOqbNQ/4S5rOK4SOCM6JCFli2gZkYIGXncDg8AA55oA9ajAGcfrQBJQAUAVIjIb+bdEqoEULIDy3XI/A4/OgC3QAUAFABQAUAFABQAUAFABQAUAGKAMHXrfZDDqEceXtJRIxC5YxnIccc4AO7A67aqLImroRGV1VlYMrAFWByCMZyCOD+H1roizjkh1WSFABQAUAFABQAUAFABQAUAFDA5jxH4Ph8Q6tZX7389s1qANsaghsNu5JPTHGMdzUOLLUrFaHwDBFeX032+Zluyco0alUy4YYycEjAwTnkZ4pWKudHpWnjS7CO0Fw0ypwGZQp/HH86pIhl2qJCgDK1WzF7KiJcW+9FP7iZiVy38eFIYMOoPbPbrWbLVy/bECFE87zSqqrOWDFiAOSR3PJ/GqRLuTVQgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAQkAEkgAdycYoFdIyrvX7O3BVG81/ROmfqeKuNFvc554umtI7mfc3mrXUSuALSCVhGpJwdzcKCTyAWwM+9U+WBnGNWt8WiLmk2VrHPKJYWW+hIEyzMGZSQGBBHBBGefasnWudP1Zw2LWoz6jbmNrKyjuUwfMVpCrA8Y2gfj+VQ22aRS+0Ld3VxDpL3KxiOdUDEMN4QkjdnBG4AFjwQODg4pGsUjFn1mbS0FxNLLJYzLtW7uQABLyAyqvzBCcHaTnaDt54qOZorlRZtrG8tntb60/e3V5b7ry2nlCO8uPlYrg7VXJUhegK8HbylOxo6dzetdGkW+hv7y58+4iDKuyERqM9fVjxwAWx3xms5+8VFcpv0jQQgEc80ARtDG7KzorFDlSVBIPt6UAPKKeoB+tAAEUEnaMnqcdaAAop6qPyoAcBigAoAD0oAzrZo5L+6ZJmdl2xunO1GUE8H1IYZoAdczOSLWCdYruRC6bkL4VSoY4yOm4d+/fpQAjtexTKwcSwLGQ6eX+8ZgOCCDjn0IA96AGi6u5TAYrZlRz+884hSi+uBnJPYZ+tADT9rtG3ebNeLJMoKsFHlKTg7dqjIGQecnAPPFAGpmgAoAKACgAoAKACgAoAY2ApIA6UBucusK6TqgsUDLazoXthnIVhuZ0HOQvIYduSARgCtoM5qqL1bnOFABQAUAFABQAUAFABQAUAFAIKLg0FOwXCgApAFAHI3vhC4n8TSa1BqKhZiwkt5IMfKY9nDj5s/dGcAhcjORWZopI0fDOiXGh2klvNLDICQUaMMOAMAHPXAwM9+TVIlyRu1RIUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFADJJo4VBkdUBOAWYDJ/GhJsmUlHci+32n/PzD/38H+NV7Nmft4i/b7Q9LmH/AL+D/Gjkl2D20O4n260yB9qhyf8ApoP8aOSXYPbw7h9utMZ+1QY/66D/ABpckuwe2h3D7dacf6VBz/00X/Gjll2H7eHcPt9nyftUHHX94v8AjT9n5Aq8LAb+zHW6h/77H+NHK+wlWhckjmjmBMUiuB1KnNS1JfEaKcX8Iy5u7e0XdcSrGPVmx+XrTjTlL4RSqU4/EYt34lQfJZwlmPAZxgfgOprphhn9o4Z49S0pIrpp+qauQ93IYojzhuPyX+ppynTp6IUaNatrJmzZaRaWRBjTdKP425P4dhXNOo2ddPCqJJqcdzLZtHaRW8rswDpcglGU/eBx3x+FZ8qe51L3RINJ0+2uRcW9mkcyqyLL1faTkgsTk5465pKIOdyP7RqS3jo2nK0BuFVJUnUkxkElypwQQQAVHrkdDmrEo0aqwiK4gS5gkgkBKSLtbBwcH3/L8qhopSMe/wBLS0sRLp9mZL1ZUk8/IMu4NuLMcZbJzuUD5snt0yaNqczqdP1K2v7WOeFiEkLBBIpUttODgHqOOtZNHRe5o0hhQAUAFABQAUAFACbhnGeaAM1nlvS4gea3EcxUs0QzIBjO3d2zxnHOOPWgCVbWRZ5XE7hHHyxhVAU9S2QMkk88k/SgCS2t2hRfNlaeVQQZWVQxBOcfKABQBaoAKAGSKHjZT0IINAGfHZXEcUEaXTsIyN7TAO7gep4wcd8c9evNACm6exM8l88SW28eW67sqvcN16H+LgYI6Y5ALX2u2M/kCePzdofy9w3bScA464z3oAnyMZyMetAFW4maIKYoHmJIBVCo2j1OSOKACO6ie7eAbhKihiCpAIJ6g9D+dAFosAcEgH3oArxXlrPLLFDcxSSRHEiK4LIfQgcg/WgCSSVEjZ3cKigliTwAOuaQI528mRtTsL4Z8i5gaBSUKkMSGXg8jcA3XqQtb03Yxqq5aBB6Vvc5LWCgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAwvFAzZQ5/wCen9K6cNZs4Mc3FHKbc84BNei4pI8enUk2a40+zYRhZSWZGbCsDuCpu3dMrhsrg9QK4HiZ9j0FQi+pImj2piiYytu8pmdOhztLADBPscenftR9Zn2LWFj3FTRYTYi4JZGKMSd4ZQQCeWUccgcZ74qfrU+xX1WHcE0mxaLeJJcFSwOOG+XOT8vy4bAxmj6xPsS8NDuVotMBFmzh9s6uW7AYUkfQkYOD61pHEt9DL2EktzMA6cD8q64tNbHHNTi9y7aahdWkLwW7BDI2Tt5OemBWcoQeszaFSe0S/baDe3knnXTNECMln5c/h2rB1ow+A6o4WpU1kb9npdrYgGKIM/d25b865alWpM7qdCENkXMHsMk1ko/zG/LcqpPctqjwfZ/9EWEOJ92dzE9APQAE/lRzILNCXEd8+oWrwzRJaJuM6suWc7TtA46ZIPBHTvnhWY7lwVbEkFCY2V7y9gsLcT3DFYy6rkKW5PTgUmxR1GnUbNbuK1+0RmeUZSMHJYYJ4xx0BIz1AJHSkma8ha3bSCDyOnPft/n3p2uZ6ox002zstY0t/LJjWRkVnJYoSp2KD2AJYAcDnnJwaxmjopyOyVwwGM1idA+gAoAKACgBCcUAQTXEMIj81wod1jXd3Y9B9aAKqRS36I9yjQbZQ6pHMTuA6biAO5zgEjgckZFAF/Z6YoAfQAUAFABQAUAFADXUsuAcUAZ2oskarjP2hz5cLLD5hViCc49MAk5IGBQBIr3YMu63jIC5QpKQXbvwRhfzNACWsJeVrySIxTzIqOhYMAFLEYI4z8x/yKALMkIlhaM5CsCCASOv0waAK502DbAPLLiA5jEjFsH15Jyfc5I7UATy2kc0TxyIGV1ww6Z/KgCuLB1lh2XUi28aFTAQGD9gWY5Y/nz3zQCE1DT1v7N4GkdCcMrgZKsCGUjPoQPr0NNMTVzJsriSeOQTBPNhlaFyn3WZT1Hscj6HI5xXTBnFNFqrZCCgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgDJ16znvLaNLdAzK4YgsBx+JrWjPlZyYql7QwBoOokf8e4/77X/Gu360rHmvBSRcFlrARUNrAdqBAzKhIHTrnPSufmpXN1RxI37Bq5jVDawHamxWZUyBjH3s5o5qRfssUOFnrQg8kQx7Qnlhiy7gvpnP60c9MmNOvYii03WocBVbaFICmUFcEY6Z9DVc9In2Ne4Jpusxtu2MSc5DSKQeNvr6HFP2lIHRqkH9gakB/qR0/vr/AI1oq9NGTwtRm3oOmyWSTNcxKspYbWBBOMDuPeuWrU5tjtw+H5TZ6Djiue1z0eayF+lMkKAKeo6dDqUKRStKipIsgMbbTkHI/wA9fTBpWGXO5+uadgCmN2IJ7hY8IDGZ3VjFCzhTIQOgJ/AZ7ZrOQIzLBbzxHZXAMtnGkb+XLG1oZFLYBKksxUgZwSvcGsXI3jTLHh2CG+sb3TL2zUTQzkzZBwWYkrz1BXAAI6KFIwCBUtmyjYt3GnX2nyBrRpby2HWCWQGRTngqzY3ccEMenOSaqMjOdMrXcF80Svc6c+xGDhrOffLGwBw23au7qeBnr0NU5kRpsuaDrH2sLbTyxvcKiukqsMToSRuA4wwKkMuPlP1rNo2TN15Aq7iQAOpJ4FSy1qUo9Tikt4J1jnkjnbCMkTEY/vEYyAexPBGD3oAebyXzJ1+x3GyNdwkG0iTjooDbs/UD2JoAkguxcQLKiOoYZw6lWB9CCMg/UUAMkuXW4igWCVt+4tIowqADuT3J4wMnnPQE0ARxwGKJWvJEmljZnEjRhQgII49AFJGfrnrQBPbXME8Ra2ljmQMQWRgwz3GR3oABewbGk8+Ly14dt4wp9Cc4FAEizBmZcgsOqjkgHpn8jQALKHyUIYAkHaQcEdR9aAHbzxkH34NADwcjOMUALQAUAV7q4W2t2lZZGCjOI0Lt+Cjk/hQBXgWWa4a5d3WN40CwMMFCMlifU8ge2KALyqAoA6UAAXHc4oAdQAUAFACUAxrHHPuKARy2kEfYiFyUE021iu0svmtzjtzn64z3rqp7HFV3L9X1MwoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAO2O3pQwejChXG0mgpcqJswo5UFmFFkEYqwU7Ielwo0DUKVkGoDgYHSnYYUCtcKACgAp3GFK4Fe6uvs5jjSGSeeXd5cKYBbaMnLEgKBkZJ9e/SolKw4wbMe8hvZL211O6sWtlsnRWVnVvMLuASpUnIU7TkgE54AxzlzG3sWWrS5ms9ei0+wuRcWu9jcWxAZrZSud24n5V3EfKefmbHAxUyRpCR16c56/nUI1bHFQTkjmgA2gDpRcDjtQtLe0v7mJ5TbxIv223nyMwOxKttJ7Z2nB4O7HStY6mL0HJd+ItRVFthCiKw/fzWzRKw91Y7ue4UYIPDVEkaQZ1kYBUZOSOc1JQ8qCQccigCpc2MU0i3G0ieNWVGDsvBHIODyMgH6gHqBQAzTI1hsYIltBaBV2+SpBCHuM9+c89+vegDjfivPeQ+HYI4MRwzSFZpTdmE8qQFVVYF2OSQOR8vINAHD/AA4+2xNe2Gm298LeW0mZYLnUTBcxMwADbcbcZUAOq5XcM+hAMB7G607wxrUVrdNPYX5VmuhDObQt5oBiEjKqZVgSJidpG4EcigDf+If9oW/jm9vI1uEaVIoQluZjuQZw52BR/ESRuYgDp2oAk0+zF58PLe0bUNLVF1lrkG9v3t1uQpbzUYlVZcMwGME4oA2fhneabc30F/aWuh2YuoZI0SHVZZbkkMODE/AHyk5znAz3NAHraHKg0AMlmSCNpJGCooyWbgAfWgASQSYZGDKRkFSCD+NAEFyAby0zcGMhmIj/AOenynj8OtAFoKB2HWgB1ABQAUAFABQAlAMQ9DQCOYsAFN7EFwsV5KoHsSG/9mNdVLY4qu5cq+pmFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQhhnBFJgZ9jBe3/iJbwFDplqJI14wzSEKCV9VHzDPHI9s1zVJHVSjY09W0iPVkgjmluESN/MxEwUMfQ5/TBB5ODWcTdj9C0ptJsPIkmM8hlkd5WB3NuYkbsk5bGAT3xVNmcUa1Iti0AFAGHdaM15rdvePKBDEq5i2cllJI+bPQkgkY/hHrQSbQUDtQAuMUFC0ABoAzbm2Eby31vb+ZeLCVUBiu8DkKe3XoT0zQAzU9GsNctI4NRtVmRHWVAWKtG4HBDKQQRk8gjrQBV0zwtpOkXbXVpbSGdk8ozTyvNIEznaGdmIXIzgY5xQBUHgDw15wb+zf3fmeYYPOk8ndnOfKzt684xjPagDqSOKAMmHw/pEUTRjTrZkaaSciSMP+8c7mb5gcEnk0ATxaVplrOs0NhaRSr910hVWHHYgZ6ZoARnlu5pY45Z7cQShSwVcS8AkDIPy/MBkYOQeeKAJI7KJLqafa5kkGCWckbfQA8Ae1AB9iRZYpY3eMRAgRxnCEHsV6fjQAkNtMZPMu3hlkQt5TJEUKKQMjljk8dePpQBdAxmgBaACgAoAKACgBKAGkEg8GgDm5Y3sNakjJPk3zNMmeCJFChlz3BUBgOvyt2FbU2c1SJaHvzW5z2CgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoQhMnsCcHIA7n054z9eKllo5nSNZvtLtYkuFkcQ7YntBAxIXAOQwU4fkkqxwQwwRkVjKJ1xkd1a3treQLNbzpLGSQGU5BI4NZWsabkyyK6BlIKnkEcg0kFh4YHpTAWgAoAKACgAoAKAEP3TzjjrQBmxWz3ixS3yhZEcuqRyNgcnGcH5jj8OTxQBoqu0mgB1ABQAhOKAKdzdJG6W6TRrcyBjGrAnOBycDnAyPTsM80AM+y3Tvbubzb5Z/eokQCy/nkr+B+uaAJrOKeK3AuJBJJuYkgYAySQB7AED8KALVABQAUAFABQAUAFABQAUAFADWYKO/pQBia+6t/Z4yCPtiE+vAbGPxHPtn3qosyqbBXVE5LhTEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFACHofcYoApXGlwXE0rlpFSYqZoVbEcxXoWXv6HGMgAHOKnlNOfQSCM2usxRWx2w3SSedHn5VKqoDj0PAU446HqKxkbUZGboOrW9n4OltnuVgmhgl8hWJUsgB2spb7wJ5GD0IqLGrlqbvhAv/AGGkbKVEcsqKrE7lAc4DA5wevfpj1qdinqjfZgvWgADZGcUAIX4OBmgAWTcehoAQSZzx+tADtw78UAMniWaCSJ87XUq2Dg4IxQBV064jmt1WNZAsRMREgwQV+X8c4yD3BoAv0AFABQBUvJ1t7VnaRY+iqzAkBiQBkccZIoAba23kxKHkM0qrtaUqAzd+ccYyTx0GaALgXGfegBaACgAoAKACgAoAKACgAoAKACgBj9Me4FAHLw7tRumv5mLIkrrbRkYVFUlCxHdmw3J6KcDqc7QiclaWpdAwAK2aMRaYBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAJaGfqRNukOoRkrLayKcbiodWIVozjg5yMZ7haxki6bswhtY4NX1G3eGLY0iXEYCjbgqVzt7NuRsnvwfWkjapoy74ZnhjtW03ci3NqzB1HBZSSVf33Aglu7bqzmawd0N8YaxNonh6e7thM1zlVhENsbhixOcbQRwQDySAKks8q8F+MNfTxKsWoarc39rPOElEVlNL9mYkna+4LsPK5KhgMjtzQBaTxL4r0/xRe3FzeTT2lykgs7eZBbrIVHJRXbdFjAKs4IbBAxkUAaml+MNX0WPQrvVk1G70+70SMsQI8m53ksxLspztIzz3HFAD7fxF4k1SDxxc6TDcMI0RtNIkWVopPKTKKq7lJzuJwSM8UATeHNa1S81uCKTUPFNwkU3l3Ec+lQxxK+3JDso3KBkHj1FAHp/RfwoAz711tCt7LcmKCEESggldpxyfTBwc9hmgC6jEk5IPTpQBJQAUARSxJLEyOoZWGCGGQaAK1ozfa7pTciUBx+7wMxZAOCR1B6jPPNAF6gAoAKAEJwOKAIjKVGTgDHU8CgBqzhoxIrIyn7pDDB/H60ABuUBcb1+TlvmHyjtn0z70APMoGMsAWOBnufQetADixyBtPucUAKpJHPWgB1AAelAEbHp9RQBzVtGbW+vbEMHjifzUbuokJYq3uCTg+hHpXRBnJWjqXK2ZiFIAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgGUdYBOiX20Zb7O/G3JOFJxjB5P0NQ0XAk1JYI4LHU7eTekW2N5Vbd5kLfKcnndgkMPcH1OedbnVPVE+kqq65qW7/WbIduT/Dhuntuz0706mwqKLWu6Wmt6Td6ZJPcW6XMZQy277XHI6H+fYgkGoNTldH+G8Gk6zbail6Fa2Ziq2lnFbeZkEYlKcuOSccAkCgB2p/DqK+v9Sng1Dyl1Jy9ws1lDcMCQFOx3G5RgcDkA5IFAFjUfAFrfDQljvrqEaRbvBCXjjmLKyqpLeYrAnCjt37UAP0v4f2enxanHNfXdwt/Ok7mJhbMGVQoAMO0AEdQAKAJrb4faDZztPbjUUkeUTSEancESOMfMw34J4A57UAdZnjr260AZjSG/lCQXH7uCYrcLsyHOD8uTxjJGcZ6YoAJBc2X2m4BmuYyVZbdduVA4O04BPHODnpwecUAaERymeeemc5/WgCSgBDyDQBTtRi9vP8ARfL+Zcy/89flHP4dPwoAu0AFABQA1zheuKAPDdY06KbxFreoQo+nXFsssQjsGupx5jHc0s8sSlUJUnCDON2WwKALMy3svgXwVpceoQ2QFrHdRPCjXM000S5RFjjDZQEhmbPTigCNxqWsnx9dAqi3kFrDc2xRo2jf7OAzAMvmALg7QVG7OR0oA53w61/L4u0VbiWRjbXy+Qk8s6rOwQj5WcMvTPUKcggcUAbeqDToPFd1HO2gak2qXs0tvNLrssQhQKDtcLlV6HHqTigD1/w48L6BZ+QbUokYXFrcefGpHGFc8sB6nmgDXoASgBCB3oEc47+b4hvmAwsUMURHqx3Nn8iB+Fb0jnrMsVuznClexVrhS5iGmiC8lMFlNIGClUYg++OKqCc3Yiq+WNzkRr2p45uAP+Ar/hXorCq12eO8dVcrFiDUdZnVXjlUqzbFZgoy2QMAHk9R0zWM4Uk7Gsa2ImOa/wBZjlaKS6gV1xlWZF6jIxnGahqmW6mIQC91zMqiZC8OfMX5NwwMnj6Z6ZptUtBxqYpoeLjXvMkQSBmRipGEDMcZIUHGSBik/ZWEpYohm1HWbd51llwYNpkwq4UEcdvcU0qTM3Xr9SObWNVglaOS4AcbeAingjd6e9bQoU5GbxVVblzRtVvbvUUimmDRspJG0L0H0rKtR5Eb0K/Mzpq5Nz1nqgoEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAGcd8fjigL2OYv5EiaW2shcTwFjJJAkrNGWDbmjXarbW3AEhio+YDucYuOp0qV0a0Nw+l6tc393BI1rMkarKvJgAGWVl6hdxLZGcZ5qJrQcJanVxncuc9/XNZm4+gAoATOKADI9aAFzQBQviWhESXSwSSOqq5AyTnJAB6kqCPbrQBZSRCxVSCR1CnOKAIb+ZYrf5pViaRhHGxGcOxwvHfnHFAElrGYbaOMszlFClnOSxHGT7nrQBYoARvumgChZET3E12lyZYZMRooGFUqSD9SWzz7CgC/uGcZGaADOaAFoARs4460Ac7feDNFvrye7ktZFluDm4EFxJEsxxjLqrAMcDGcZoAku/Cej3lpZ2z2CIlkm21MDtE0CkYIVkIIGABjODjmgCfSdAsNEWYWNuUe4cPNK7s8kjAYBZmJY4HA54FAFi90u21CS0e6hErWcwngJYjZIAQD154J60AV/8AhGdDPJ0XTueT/okf/wATQBetLO3sbcQ2tvHBECSEjQKoz14GBQBaoAKAK93NHa2k1xK2yOJC7tjOFAyTj6CmiWYFisrLNdTrslunEhQnOxdoCqT3IA59ya6Io4qj1LXfHetCXsIWCjJIA96OW4lLlMW/8QwQbkgHnSdDg4Ufj3/CuinQuclbGqOhhSS6hqu6Rt0kagk7VKoAP8/WuiPLBnnVPbVNSgCCAcjB5610ud0c95bWL9lqEduIVlhDiKbzFYPggnGeOh6Vy1aUW9zqoVYpaosy6ykl/NMFUxOhKhowSG2gDr2BrNUFYtV4yewWWshYpxdMPMlYEts4YYIOdpBzz9KJ0VfQqliGMbW3NzcSAM6StuUNIV2jAGODxx3HamqEbDliWmNudVike6CQbkuMbmdiGOFG3B7bWBPv0qFRS6kvFc3QqX1wlzeNKgIVgo565AA/LiuykopHLUbexc8PYOsRc/wt/IVliZ8yNcJB8x2deetD3XpEKBBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAE4/pQAA5GRzQMq28l29zdLPFGkCuBAytkuuMksM8c8du/WoYx1pZW9jE0VrEIkZ2kZVJ5ZiSx5PcnNNIRX1WITLaRzZ+zSXSRzorFd6tlQDjBxuKkjPIXFRM1pbnUxqFTAGB6enHSuex1okoAQnFAroaxxj3NFrj1exHJMkSs0jBVHJLHAH40KLJdRFIaqLjIsomn5x5mdqD/gR6/gDV8qM3UZFd2krWr3E6i7kiUyR26jALAZAB6k9gT6+9IpIml1GytBKJLiIfZ1DSIrAtGp6EqOQOeuKRaQ+8m3RhLfyHudplhSQ8HGBnjJx8w5HTIpDHrexC4Fq+4XJj8zZtPTPOD0OD70AXAcigAIJBAOD60AUo7WWGdzHIghKnbF5YARs5yCMZBySQe/QigBga8ga1WUJMzyMsskSlFRdrEHaS3dVXr/ABUAX0xtGOlADqACgAoAKACgAoAKACgAoATNIHoZfiJc+Hr45xthZ/rt5x+OMfjVR1ZMrtaFYEYB5wQDwPUZrp9DgcmviMy/1y1s8orCWUfwqcgfU9q6KeHc9zmnioRMQyaprzEBWWAnt8qD6n+KuhclI4ZOdZ+4aln4bt4QGuG85v7p4Ufh3rKpiG9jpo4JLWqbAjQIYwiiMjG3aMflXPc6/ZojNja54t4h/wAAX/CqUmT7BB9htv8An3i/74H+FHMw9hTE+xW3/PtF/wB8L/hRzMPYUxfsNt/z7xf98D/CjmYewpifYrb/AJ9ov++F/wAKOZh7CmL9htv+feL/AL4H+FHMHsKYn2K2/wCfaL/vhf8ACjmYewpj0toIm3JDErDoyoAaV7lRgkS0rGlgoEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAFeeKeSWBobnygjhpF2BvMX+7k9PqOaAJwMADJP1oGL3z60Egc9qaKRR1OQJHaSHaQt3EwQnmTDdB6kfeAGfu1jM1pbnTqeMZBxmua51il8Ak0XC5SvNVtLBd1zMseegPU/QdTWkabkYTxFOG5mf2xf6nkabaGOH/nvcAgH6Adap0+Ux9rOr/DI1trX97PezzalNC2HSNDIEYnoI1zyPxx3xSc10NY0WtzeQoUVl6YyuRjj/AD2qNWbxikT4BXHYikMaIkBPyjJGDx29KAIltIlmeUIolYAM4UBiB0BPfGT+dAEV+pW0ZknEDJtJkboFDAkH2IBH40AXV6UALQAhJA4oAzg6Sayw86QvHACYsfKuScEn1OOnoKANFelAC0AFABQAUAFABQAUAFADS2DigBu76Ur32Jb7nP8AijUrWLTJrVph57hdqg8ggg5PoOO/FdFKi5HLiMWqasjAefVNbJEKC3tW7/dB/Hqfw4rtjCNPc8mUqlYv2Xh61tmDygyydfmGFB/3f8aU67exrSwiWsjWChQAABjp7fT0rF3Z1KEegtC0KswosFmFAwoD3QoD3QoD3QoD3QoD3QoD3QpWEgqhthSEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAXCgLhQAUAFAXCgLhQFwoC4UWAKAsIeccZ9qNh+6ULnTo3vhex3EsF0sfliVNrYAOR95Tj3AxkVDg5FKookcficWBlt7qVLpkx5bwIFDZzkMMkAgjseQelJYab+ImeOjHbUVbjXdbAMC/YbZujn7xH8/yxVctOmZJ1q/w6Fy20PTtPnje4fz7uViFaY5ZmALHA+gJ+grKeIb0Omlg1HVl6C0Nx5E99BAbmLJULyIyT0B74GBnjv06VjudVuXY0I4Y4wwRFXJycDGT6/X3oKKstuYp5rq3/1zoFKOxCMQeCfQ4JGf54oAbi6kkgle58tUBMkMaghm6Y3EZwPbGT37UAEMzWtwLe4unled2MBaMDgDJXIGCRzjOCQO+CaANEH3zQBVvYUuIJYJEEiOhDITjcDnjPbnHNADrKc3NlDOUeMuoJRxgg9waALNAEU8ixRM7sqqvJLHAH1NAENmspSQ3PllzIxXZ0C5IUZ7nGM+5NAFoDHFAC0AFABQAUAFABSuAUANzTD1M/UNVtNOTdczBc9FHJP0HWrULnNUrxpmK11rWtYW1jNjbE8yvyxHsP8ACt4+zgcspVa2hcsPDVlYgSSIbmfOS8vPPqAaipXm/hN6ODgtZFDS2dDdWnDJbzuFmUna2WZiOQOV3BTjI469hUL21FOKi9C+JIzIyB13qAWUEZUHoSOo59aa3IbbQ/8ASrEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFA7BQFgoEFABQFgoCwUCsFA7AOelJO4MjmuYbePdLIsaepbGatRuZuokYl34mhT5LWMysTgM3Az/M1tGh3OOrjIvSJWWz1fWGH2lzFCf4SMDHso6/jVNxpmcKVatsXx4fNrCJbPzBexfPG7rvBYAgKy5AKnPQEHoc8Vz1a8pndh8PGDLkvioLbW8dtZy3GozER/ZijRKshGSGZhgAYbpk4HANcTVtz1otWJtNg8QXGqJeapJa2tvGpAtLcCUOxByTIygjHHTGeh6cq6G00dHj2pALQAYFABigCC4j82FlBwezAAkHsRnjI96AK0E8sRht7rc07rkyRxHyyR1552564J78E0ARyXEt3H/oQZWWUK7TRMuAOSQCBu44GOMnrjggEg0+HE5Hmo1x/rGWVg34HOVx7YxQApsvLWALNcYhwB++Ylh/tEn5vqaAK8trNNfiOYG4tXBk2yBSsLqV2AAAE5yx5J+6OmaANVenIwaAHUAFABQAZFAFS7m+zxPMsbyMi8InJY9gB7/l3PSgBgF29wsm9Eg2cxFCW3e7ZxgdMAHPrQAy0a4ZB9pWJZgTuETlgQScHkDAPpj15pJBsSXl9b2UXmXEqoueMnJJ9AOpP0q1EynUsZj3Oqal8tpH9jgPWWUZcj2Xt+NacqRzOdSpoiax0G1tH89w09w3LTSnJP+FS52NIYaO8jXA44FZ6M6VFRKOrw3dxps0NhKIbhgNrsSABkZ5AJGRkZHIzmlqgaUjmbG/UWMVraWrfb9nNpli0bEkkyFuVGSSWbJPOMk1upWRy+zbepYksE0+701EYPfM0slzJtwXUrlifbcECj0GOxojLU1klFGljHFbnIFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABRfQezK19O1vZTzRgFkUsu7pmnTV2ZVp2RzX/AAkt+e0XP+yf8a9COFgzyXjHFk0etavNGJEt1ZC20EIcE+mc1nOjRg7NmsMTOew86nrYV2NquEJDHb0I/Gl7Oj3Kder2BdU1pg7C2UhGKu23gEdec9qPZ0e41Wq9hBq2tMrEWoIVirbVJIIOCMA5OD6UuSj3BVa12RPruqRmRXijBjYK3y/dJ6DrVqjSfUz+s1kmJJ4h1KKRo5EhV1OGBU5B/OnHDxexDxko7ktn4lkMrG8CiMKSNq8luMD+dRPDW2NIY+4y78SXFwdlrGIw3AJ5Y/T0pRw0Y7kTxc5aQGW+h31+4lunKKw+9IdzH8O36U3WUdEOFGVXWob9lpFrYjdGmZMYLtyx/wAPwrnlVbPSoUFFCapbTzpCYl89I2zJamTy/NBGMbuxGSQDwe+OK55XZvTSixunafp95cTW9xo4t3jVXAFwXBViQASDjIxz1HoTWDbOlSUjag0nTrZkkhsbeJ0ztdYgGHHXOM5xnk81N2ap2NIOp6HNAx1ABQAUAFABQAUAHSgAoAry3MMIUyyqgZgqlmAyx6Ae5oAorIkV7Ld3JlgRVWFPNcCM5Y/MAOhJwMn0FAGpvUjPagBQcigBaAEYgDJ6DmgCiLi5aWdTZuEQfu38xT5h9AM5B+tACWsG+U30sLxXEkYjZGcNsAJOBjjqc5ouBbkmjiQs7BQPWnYXMY+55tVkW2iaF5IF3TuucqrNtAGeuWY89u1Cgomcm5lyDS4YZPNYGWbvLIdzfh6fhRKo0EaKReC47VNjSwgXHb9aYuUcAcUFCkZHTNADCMEE5/pQhHN28hvNRu73btjB+zRKVw2EY7iR2y2cD0Ge4rogjnqMt/n+NanOFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABRYZS1X/kF3P8A1zNXT3OeutDhc8V68eWx8/JamlYX1vD9lWZJN0LMwIOVO7nBGM+1cdehzvc7aFeMFsW5dRgZp2iuVj3zbseSxLDja24DIYc+1Yqg+xtLEUu4sGo2hadnZQzzliVRhlT3yAST2wcUpUPIqGIpdyIa5tllLKzhpGZWXaCqkg4AKnAOASO9X9V03JWMXM9CG5vrdhdRqjOJpDJ5o4IYH5QB6ctn60KjYzeJTT0Kt/Mk+oTyxHKM7FTjHFdNBNLU5MRJPZEml2P9o3nkFygCliV64yP8adatyjw1HmOttNLtLIfuYxu7seWP415rqyZ7cMPCGxcxjpgH2pbm1kU4ry4X7Y97ara28GWSXzg+9AMsxAGVxg8c1F7F7EdlrMGoXr29tFMQibjKyALnjC9c5IOR60cwnFliaziuJ1mLSrJt8vdFKyblznBx1/8A10NIcZcpjPp4ub+W2udTmtOiwRzMzCaMYxgs21hk/dxkHgkisJWOqL5jrNM0230uyW3tgdoZnOcZLE5Jx0GT2AAHoKzNTQ34OCOe3NACGQDHGeO3NACljnhSaADeD0HPagAMi5A7mgBVbPbBoAdQBUubyK2KCQ/NJIsaADJYnpj8iT7A+lADILIxohuJDcToxIldACCeu0DoO3065oAsSwJPC0UqK8bDDKy5BHoRQBCLWcTyyLdvsdMLGUBCt6g9T9M4oAYJ7i2+zw3CtOzlg08SBQpGSNy5JAI4yM8+mRQBfoAjkXchGceh9KAMqFY0naHT3RfLnMl1HkkfMCTjqASSDgflzQBrgErzwaVgK1w0FtG9xMyxoilmdjwqjqfb8Kq4uUbbJMJZZJGUozDylAxsXA6+pJyfbgds0tR6IuUBuFAgxQO4tABQAx+3OM8UITOY0pjJY+eRgTyPMq/3VZiwH5H9cdq6oLQ4qr1LtWQFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQA2SNJY2SRQVYYYHuKAKn9j6f/AM+sf5VftGY/VqYf2Rp//PrHn1waPaS7h9WpiDR9OHS0i/Kn7WXcX1aj2A6Pp5P/AB6RfkaPaS7h9Xo9g/sfT/8An1j/AFpe0l3F9Vph/Y+n/wDPrH6jrR7Rj+rUwGj6eOlrH+tHtZdynQiSwafa2z74YFRsY3L1/wA8VMptgqKRZpGoUAGKVgTsMjjSGMJEiogOdqjAz9KVir3K7xfbdWgs/OljjELyuImKk4IVcsOwO447kDOQKzmzSES3J4W0+WIxM92YmGHVrhmDe53E4P0xWDZ0pGpFbx2ttHFEpWONAqqSTgAADk8nAH1oKPOfFNz4gbxjGNJutcTTYAov1gRNgLDEZiUqWZQ2C5XOFPHNAGdD4i1mPR70X2o3q6lL4jlskGmvE4GEDCNTP8qqMHg4OT70AT6N4h12y17QLbW5bu6uZNKvGuYbULNmRZVKFljO3cEwOO7Ad6AOLl8X+Nxby6MmqXgvmRnQ7V3Bd5w2fL3dPl654oA7nxRrOt2msw3jXHiCy0JrKHa1lbQ5E7MRtcSjIJyowD1IFAHZ+EZLuTSW+2trDSiRhu1WGKOUjjoI/l2+nfrQB0NAFCPzJbuV/OR4FO1VUcqwzuJb15xjsB60AX6ACgAoAq3UH2iGWISPE0iFQ6HDKcdQfUUAJa3C3EEcsciyRsuQ6jhu2fbofpQBZbpx1HtmgCpZ+aWuRJCkY847SpB3rgYY+/X8hQBJLdRxS+UWXzNpcJn5iB1IH4j86AKbXLXsUfk24kjlkCyeehQKg6na3JJ6DjqeeBQBqBQKAFoAKAKV1fR2skUbby8rBUVULc9ycdFHcngUANe/EIleeM28UZAEsrKFbOACCGyBz3AoAuK2TjI/CgDM8Qyyw6LO0EjRzMVRGQ4ILMBx78mmkTN2RVhgitoUggQLDEoVFH8KjoK6YI4p6j6sgKCrBRZD5V3CjQXJ5hTskJXZFLcQW+POmSPPTccZpRTb0InUUdyL+0rH/n7h/wC+hVck+xPtYPW4DUrHvdw/99ClyyfQX1iD0uB1Kx/5+4f++xVRhO2we3iuof2lY/8AP3D/AN9ClySvsL6xFdRf7Rsf+fuH/vsUKMuwvrKdtRDqVj/z9w/99Chwn2LVWDvqH9p2X/P3D/31TVOXYI1V3JoZ4p13xurrnG5Tnp1qJXRcG5PRklFygoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKegaBRoGgUD+QUB8go0FZBRoFkFAK4UA7hSAKAA9OKYmUfMm1K6FpYysiKT9ouEXd5YH8KkgqXJ+oUAkjJFc852N6ULmxp2mw2PmPuklnlILyysCzADAHAAAA7AAcn1NYuR0qFjSpJFMG6UwOZ1Lwml/rjaxDq2p2F00CwN9kdAGRSWAIZW7saAJovCenzaa1lq4OsxmbzwdRijchsYzhVUZ5POM8mgBlr4O0jTtfg1OwtorTybaS3WCCNUjIdlYsQB1+UD6UAV9Z8AeG9Y0m6086RY2xuFI86C1RXQ5Bypxwc96AF1LwB4e1md5tQt7uZ3ZWYC9mVdygAEKrhRjA6DrQBp6L4e07QVmFgtwolILeddSTZwOMb2OPwoA1WOD3oAp6ftNoHFsbcyM0hjbqGZiST7k8496AL9ABQAUAIQD1oApyWMDeXgOgjYuqxOyDPXkKQCPrQBBc2U00N2kd1OpmXADcrH67cbW59N35UAOi8+1NtbJbK0CoFaSMhQhAAA2emPfj3oAjtLuO71KdoI4niRAjzKfmVwTlGB5GAc/jQBphVIGVFAD6AK9zOLWAylJXC/wxoXY/QAE0AQG8cXSQNBcLvj3iQplARjKkgnDc9+D2J6UAMtWe4aWf7SsttIV8lUAIUAYPzfxZOfbge9AF1o0eMoygqwIIIyCD2NAFdbVY51mWSRVVNuwOdhHY7egPuKAMXUhtns9PSWaZ/OW7laVs7EU5HbjcwAA/3j2q4IxrOxZHSupI5E7injrQK6I3uIYx80qAf7T4p2ZLqJFZ9VsY/vXcR+jZ/lQqMmZuvS7laTxDp6dJGYj+6p/rVrDyM3iaaK7+KIAMx28rf72B/jWscM2jN45dDI1XVP7S8sCHYIySPm3dfpXRSo8hw1q7mZ23PAIU54J6CumUpKOxhDlUuW50F7oMVvp7zxhgQmQWfnPHLHpjtx6150cRLm2PTeDgo81ym+n2qmRRcIWSDL5cgK4Iz25GG6+1afWJ22MpUYX3LM2j2sdh55LqTEWLGTcqtgYAwASevtWaxE77GssPT5dwm0m0S2nlXzflRjGSGIYcbSTtGD1+Xn60LET7EOlT11KraakJTeGObVpGy3SRcnacdMZGQfWr+sTfQxlSjpqZmPxrsSTRxK8Xudb4a/5Bn/bRv5CvNxNlI9rBST6mzXMmdoVYBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFJjRiJFf3OpBpDcxeTKxL+Zti8sHCqqg/MWHLFvu9h0xm0zS5tn8j2+tWZLcpWcl/p6TW1taxzQmRpIXebYEDHcQwAJ4Yk8diPSsZROqE7Fe78R6laSfPaQXHlKryx2geTCk9SxA2k4+UYOe+BzUOJSmzq7eQS28cgDAOoIDLgjIzyOx9qk0TJ80DCgAoAKACgAoAKAKOqhW064Rrk2oZMecvVM8ZFAFwMuOooAdQAUAFABQAUAFABQBRvbUXYQEyKUcOrI2CGB9f0IOQQSKAF8m7Msp+0R+Wy/u18o5Q+53fMPbA+tACG2u3iiD3hWRSC5hiVQ47jDbsD6HPvQA63tUhnmmUP5kpG5mcnp0AB6Aeg9TQBJdvJHbSvFH5kiqSqZxuOOmaAFtlSG2jREESKgAQdFGOn4UANmNwR+6SPP8Atsf6A0WJbIJF1BlP7y2T/gDN/UU7k2MHUbe8/ty1H2xFlaCTMiQ4AVSvBBJ3fMwPsM+tb05R7HNWpyf2hraZdOfn1O4I9FAWuj2kV0OSVCX8xGdAifl7u7Y/74/wp+0M/YQ7jB4ZsM5JlJ9WYZP6U/bMn6tB9SUeHtOA5ic/V2o9tMpYNDhoWnr/AMu6n6sT/Wj20zRYWJING04f8uURPqVzUurISw8OxQ1bRGmEQsoIk27t3IXPpWtLEOO5z1cLF7IzP+Ec1H+5F/38/wDrV0yxFNo4ngaylcuS2WuzQGCRomjZdrLlQSvpnH0rmcqdzrlQrctrjJdO1qdGSUQMGUBm+UEj64z2p81MUqNYH03W5YnRzEd6hWbcMsBjAJxk9KOamKVGtYjTRtYjV9rD5lKkebng9evA6DGOlV7SmQsNWEXRdXRnIKfMGDZkBzkAMfqQOtHtaYPDViL/AIR3Uf7kf4uP8K1WJVjJYJtnQaLZzWNj5UygPuY/K2Rg4rkrT5nc9PD0vZo0qwSOoKtCCkAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFMA571Nh3GSyLFE8jsqoqlmZugA5JPtjNDGlcr2GmSatG1zfu/wBndt0VrnaAvG0yEcsx+8QTgZAx1rnlI6YUzbtdOtrKNltoY4Qxy3loFyfU46mp5jWyRNNPHbQvLK22ONSzH0AGSakdyBLqV5INlpJ5Mq7ndmVTGccAqTnP06UASQXtvdQ+bDKrx5ILKehBwQfQg8EHp3oAS2vY7qFZFV0DZwJF2kgd8HnFAFoHIoAWgAoAKAIZ4VnjMciqyMMMpAII7jmgCC0M5hP2pVWRXZSEOVIDHB6kjIwcE8ZoAu0AISB1oAaXGcc0ALvWgA3DHFACeYMZwcetAChs9iKAHA5oAKACgAoAawJ6frQBnKh0+QBVnnWaUlmyG8rPJ687cnPfGfSgC8JVYEg5AOCe1FxWOc8Xai8enfYLS6e21K4KmDywxchWXdtwME84wxAOeeKaQEFlcTaldm+nieHZCsSIyldrEbpevXDALnp8vGetbw5jmq8tzRAxWupi+UWgXu9wpWHddwo94NQo94nUKe5TnLsFDBOT6BSUUN2YUWSJSuFPQTjqFFkNxVgpcqBpBRyoEkFO1h2SCgNwp2AKBBSAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAJxQAA0AFABQJmZqTxT3Fnp0txHCl3IQxLjcwXDBVB7llAyR0yOtZTZ0Uom+YRbXqSQWwL3L7Z3U4wArEMfXkKuevI9KwOonlvIYriOBpEEsmdiZ+Y468enFICq09xdxn7PG0P70KWnjIJUH5iF75HAJx1zyByAaOwY6n8aAKs9gsxBWaaE7w7GFgpb2bjkGgCK9jhhuLW5dJGdX8pSmTt34BJHcZC/TrQBoJyg5zQAp7460AMLkDtntmgCo+qW0YuC0mPswBmIVjtyPYc/hQBMLqN7UXCyIYiu8ODkbeucjtigCLTxE0BuYmkK3J87951G4DA9hjGBQBeoAaxAAzwM0Aee+J9X1+PxPDZeH79iwZWu4pdPDQwRBSSxlONzNgAKCTz2oAy9I8V+JJ/ButO8VzLr82qz2VhCLcqsB2qV3BhhUXLNlj0GMmgB48WeIbzV7KGztLlZG0a5a4t5FUeXcxnaJAOd4LAABSchs0AR6p8Qr5vAq/ZbTVYtbEEXmTNZ7EEoZfMGTkcncBgY5oAs+I/FGuafrqpNc3Gj6ebOGQMulG9/fMxDIXU4BHyj3J4oA6/wAJ39xfaOZbi7uLqQTMvmT6e1m2MDA8tucD170AdAORmgBaACgAoAjaJWbcSc0AZU0UsM23To7RJ3kDz5HVSD8xAwSSQBnvz6UMHuUNU8w3+kxFY1nLPJI6k42AAMoz97dleOuRu/hrSBlV2LWSeTyT3/nXQjkFpiCgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgCOaJZ4XicEq6lWAJBwQQeR0PPX1qQKulaeNNsltllMqhiwIQKvOB8qjhRgdu5J74oAmtby3vVdreUSBW2sVBwD7Z6j3HBqimTkhVJcjAGTngY/GglIqaXa2urX91eSQw3EEflwRMwDAshLMynsQzYyP7uQTXNJnZBHRXFtBdwtDcRLJG33lYZB+orM1YsdvDEqpHGqqq7VAGMD0HtQBJsXIO0ZHSgB1ABQBDMCylQzKWBAK9R7j3oAqG3vEt4I475gUf53kiVmkXPQ4wAfcD8KAJTBKZ5XN3L5brhUAUBOOoOM5+uRQAxNPUwwpPPcTmM7g7yFST/tbdoYexGKALu1eOBx09qAMq7hlh1G3mOoPDanbEbYINrsT8vzYyPTA68dKANSMgxqRjGO3SgB9ADW6DnHNAHHeI/BT67rEOpC6tnMduYBbX9oLmAfNu3qpYbW6AnnIoAqj4eovhF9BGqSgNefbGIjAizuDeV5WceT/ALGfxzQBP4d8EDQ9bk1Q3FojPB9n+z2FmLaEjIO5lDHc3YHjAJoA58fB1UsVtf7VtyfMEnnf2XF5xIbdjzfvDnjPpQB1Gs+CLXxBNK15q2siKR0k+zxXhWJWUgqVXHGCoP15oA1dI0X+x1lX+0tRvRKQc31wZSmAeF4GAe9AGwvSgBaACgBjsR0/lQBnvJNeAGN7m1RJecooMoHpkEgZ9snHHHNAEV/LHpcLTW9tG1xPKoA4TzHOBknHYAnueKcUTN2M+KCee6F5euXnBbykVjshUjG1RxkkZyxGTnjA4reMTmqVC0BjpWxiLSAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACmgaEPBBHUHj/P5Z9qloEQWtnb2asttEI1ZtzAZ6/j29qEVJlTWJEEEC3G9LNplNxKFJCop3fMADgMQqk4wFJyRUSHTlY3tKvrHUbUSae6vAjGPKqVUFeCACBx9OK52diNGkUJux1NAFLzJXuv3YQ24QkyBsndnAAHTAwSSe9GgCLbXbWyxyX0gkDZaSONVJHpghgB79fegBtxHLama5t0llmkKjymmO08gcAnCnGTx1xzQBejIZSQQRnqO9AElABigAoAKAKF0ZBdwFvJ+yAMZS5wVYFShGffd+lAF1WGByKAHUAHWgAoATAznHNAC0AGBQAUAMLqrBSwBPQZoAduHrQAEjHWgCpJdxLcR22/M0mWVApJ2jqTjoO2T3OOtAFZbSe6SF79QJo5C6JDI21f7uc8MR6kYz0FCAuvKsQwynHoqk/yFDQr2Of1m4tpdT0wb0DxSPKzPwAu0r0PckgA9sGtaaMKs9CVbm3f7s8TH2cGumxx85KGBPDA/Q0rApvuL+Bosi013Ez70WQXDtntT0CwtDQXQmRSDlQtDYm03sFNFuLtuH4GkTo+oYPofyoshcyj1AAnoDRbzHdsXB9D+VAaifgaLivEXb7H8qVx3iJ+Bp6heK6id6LWFvsxaBhQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAE4pg2Vbm9jt2WJVaa4kH7uBMFm5AJ54CjPLHgc9+KylIuKIU1iwFtBNcXENs0yB1SWRQwH584o5hxjcbBcatcWS3kdjaMjgvGxuSMKSdpOV68ZOPXio5jT2Y7w/qL26W6XQCQXqmeBg3Csy72jOcepZSeoyDyKiSNIM6lZFbPXj1FSasZJIkY3O4UDuxx/OlysnmMq2v7Wyglj2fZrS2KhJWYCMqeQdx6cnBz049aXKwua6SqVBJA9gc4plDWmiO1fMUu+doDDLY649cZoAraYsHl3ElurhJLiQkMeNwbaxA7AspP1JPegDQoAKACgAoAguLeO5jeOaNZI2GGRxuDDuCDxQBTkha2ImjklEMMZBto1VlbAyMZG7OOBg4PcUAXoZ0nhjljOUkUMpx1BGQaAJaACgAoAKAELBRk9KAIWuYVcxtIgcDJUsAceuPSgDldcm8690fXdLeG8VJWh2rKArq4K8N0GDnPrgelNIiUjT03Vbme8+x3liIZvKMm+KUOjAHHGQGHUdQO9NxCMjZLoRjcOePrUllXTm/0VWe5E53NmVRgE7jxj26fhQA6+1G20+1NzOxEYZV+VSxJY4AAHckgfjQCMe51We51BItPuLYQPbidZWQybvmxjAZcY/Hr2q4ozm7DbaxS28x2JlnlOZZnALOT1z6DphRgDFbpWOS9x0tjazfft4j9VFaKREoFZtDsD92Fo/8ArmzL/WmqrMnQT6kR0NV5ivrqM9vnyK09q+xi8M+jIn0vVU/1OqMR23g//XpKcOwOjVXUhaPxDEMiVJB64U5/MVf7tmTjWRGdR16D/WWmffy8/wDoJq1SpPqL21ZdBh8S3iMBJbRjHbDKf1p/V6Xcj63XXQenikscNaD8H/8ArUnhS/7Qk3qhLrxHHcWcsSwyRuy7VIYcHPWqjhXfczq4q63MM3NwBn7RLx/tmur2dJHCqkr7mlZWF7f26TJeFQzEYZySMEc+/U/lXNUnTi9jsp0nNbjVtL5xKy3EpVJhGSHbkZwWHPQcfnS9rS/lFClUv8RMmnXbtKDeyo0bsjKdxzg8EHOOnNT7al2NXRqfzCppt64f/TXDq7KMsxGFIHJBwCc9D1oddfykKhL+YqTw3kLzj7TKVimEIO88sc478dAce9XCrF/ZMp05L7RBcyXEFzLF9olOxiu7ceccVtTUZIxquUeppeHJ5n1Fw8sjARkgMxI6iubEU0juwdS/U6sVyHqBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFA2FHMCQEZpcwreZmXKXemte3dg8O65X98ZsARkLhXDH+EADKnjqRgkgw4qXU2jJRMKDVptOvW+wwK0YIhe3Ys0k8SqzLIuVHzYDA9VBYA57Z/HojSPKtUaeo+IEnuVsrKeOPT43iMl1a3KqdhViVUbeMELwpP3h74pYeRnUxcYfEY9n5uoWklhb2txcRFnt5oX2mKMtyrKV5Tg7scbSeAoxVcqRjHEOWyO0srDU/s0UVzepGEQLi2jCk4AGcnp06AYrOTR0xhOXUvQ6ZBE25laaTrvlYuc+ozwPwxUNmihYk+0Wxdo/OiLZwV3gknHIxmpuWitbJb3UbywXK3FpImxYoypix0IBHXoRjOByKBgo0tSYMWim0KyeV8o8nOdrbf4c84PGaALU11DaGMTTRx+a4ii3uF3seijJ5Y4PA54oAmMyKcM6qfRmANACrIGwRgg9wcigCSgAoAKAI2UlW2kA4OMjofWi4WK1jKzWULO8csgUK7xnILAYbH4igCwJP9n0zz60gKFvrdrcanPYKJVnhLDDIQH2gFtp6HG5c/UUxXNMHIzSuMKYDXOFznH40XBI5bWtOsIdUtrya3gkF3IttOJ41YM20+W3zDrkbeOob2q4mUylqGkPMLzyLiGC3uxE0gaPOxo23blwQMkDBJ5GBzxitHDW5lF6Etzc6RfTQRzSiUtgxyxMwUMwJAWRTwSFJwD90ZPrVPVE6pkd/LeaaT5Op3RZraXyzKVk3TKFKqAVwCQTz3z9azcS41HYtfYru3iZrXUJzMu4xoxVYWJJJDKq4IJJy3UZz2oUA9o7lWex1XUrprq5uhFbk+ZFaPiVVYBQqtj5WU4bI5OSCCCKOQr2hPommtptn5csFoso+XdCpJZB93cxAy3XJ79a0jGxjKdzUrQzCgAoGFABRYQHJ+tTYBMcYHAoSsFkDIrjDKCPQ8iqTFZFaTTLKUYe1iI9kx/Kq9o11M3QTMzUdCs47OaWCFxIq5UKxOefStoYhpnHVwlznPstx/wA+83/ftv8ACu9VaTR5s8PNPYuW11qdrFJGiXJUrtUbW+XnORx1rCpGk2a0pVI9AimuFRRPZXMsiuXWQFlOTjPQdDipaj0LTn2J7W/u7cMv2K4ZTIZAPm7/AMJyp4zzxjqaydOLNVUn2K0U+oQb9lqxVnMhDQZ+b2JGavlpEKpU7Dpbm/kaQLaukUjMTGITjLEHJ45IwMHtQo011FKdT+UrXEVzPcyzfZZl8xi23Yxxn8K2pVIxRhL2k1safhyCaPUXaSGRV8phlkIHVfasMRNM6cDTlB6nVVyI9lhTYkFIAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAjeeOJdzuqj1Y7R+tPlbIlUSM258QWFvnbIZSOuxcj86uNGpLc5qmIpr4TPm1mfVJG06GzTMqHckxJ3KR3HAwQfXPcetU6NNfEyY1K0vhRnalBqNjYLcXc7KystpCWk3blIJBZs527gOpJ9TUOVOPwmqo1n/EZajt4LWAXen3cUtu07RySTQk+SD8oGBtbG4jcRgjjgAGsnWk9jphQijc8KT+XNc6XH5D2toAkTxKFJx8hLY4YkqxJ9cjnFc8mztVux1QA9Kzs2X7ojNg49simFzyUeHYtT8f6jqqS6TaTwzfZZ0hBWa3yN63CyMuGmOQD8uApxkkGiwzC1DTGj8I+F9F1KwRN9neJJdzadLdyWzFxt2rERhmzkHkZFAFlLGXUI/Flhby+XZx6Dp4lubqB45h5SsVIiIBw21sgkEcYoAdquua34lfwwl0zWUMurWstrcR6e0YBKvtIZmcMSGyAVA4OTQBX8RS6HB4vvLh7jwtqTalequb3ezWpWIKd5VgFXKHoDy1AHq3g6e0m8OWq2UmmvFFmNv7MJMCsD0XPPcZzQB0dABQAxmIIA70AG4kZ4xRYLnLHxLaWdxdRx6feC3iZ2eVYSqF92HBZsDOSMYPzEkDkYq7E8xQikn1TU5b3/AEjTr/aBGksJLLCVIK/MAGy3zYXIBA5NOMbmcpEyqlhrFnPc3m4NLI89xKAoJaMKqELhVDBQ249TGPUU5RQoyOvjkWSNWUhlIBBByCPXNZWNrmZaeILS8uBDH5yllZ1eSFkVwDglWIwwHH4c07CuGn6tBrlnKYPPiH3QWQK2GAZXXr1Vgw78jIB4osVc5eKGePSJtQNzdXjQvI1p5w3bVBClto/iwHPXOD0BJA0ijnqMtXss+oaDboIw0l8FiLRyBQpZSxIYhscrgDHUgHA5FOehEVqOGlHRNLsbkLGZYZ2eZFOSxmYA7W6lgSoGeCBjgYxEJXZrUjZGheWNvfweRdRiSMMG25I5HQ5GD3I+hNdDRzxloT/if896aRPNqKQM0khMBx0qgSCkAUAFAwoAKLiCmAUgCiwBQ7BdgOAfehC3D8TRawcse4n50wtTQv4mlqTyxD8TRqHLEOfU0aDtAPxNGg7QD8TRqD9mugUmmw93oFNFIKbEwpAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFFxSV2Q3N1FZwmWZiqAgE4J60Qi2yatVU0Uv8AhINN/wCe7f8AfDf4VqqEzD65TD/hINO7Tn/vhv8ACm6Mw+txE/4SDTuvnnH+43+FHsZB9apbh/wkGnf89m/74b/CiVCdivrdJoX/AISDTf8Anu3/AHw3+FT7CYvrMA/4SHTcZ88/98N/hT9hMX1unsB8Qab/AM92/wC+G/wp/V5oHi6Mdixaajb3pcQSFimC3ykYz9aynC25tTrU6m7GXGq2VsSJLhAV7Bsn9KqNFsieIpQ2M2fxREoPkQM5PRpCFH6VrHDdzmeNT2Kn2/WtRJEClEPdV2j/AL6NaOnTgYupXqk8Xhqedt97ckk9QuWP/fRrOWI5djSGFqPctXOkpaWEpsLYvcNhQwYF1BOGZdxA3AZIGRzjmsalaTOylhIp3HMtvPp0UeiWSrd29yk01u7hJV6qxbkhiwJXJJBViQSQK5HJ3PS5FayLdlNJcPdQXP2ZzE4iLQ5KMSASDuzkjIB7c+1WjCUbHO3P2O8S+YWrwR21u1vEr2zERNuLNIWUEpgZxnk53MMYpSRpTkkb2kSIPEccTW0kMq2jRiLbjygGBJyBtZWwuGHdTwCSBEjaB1v41A0G0elAzEvfCHhvUbuS6vtA024uJDl5ZbVHZjjHJIyeAKANGzsLTTLJLSxtorW2jGEihQIq5PYDgUAQvpNg815M1pEZL2MRXLFcmVFBAVvUAMRj3NAGbB4J8MWdxBcW3h/TYZrdleKSO3VWVl6EEDOaANv7LbkcwRE+6D/CgCRY44xhFVR6AAUMCCe9tbdgs1zFEzDIDyBTj2zQkK5iX3idI5M2BhuoYUMt0yuTsQEDjA64yeeMKafKQ6mpV16I/wBraZqS3JtgI5I0u1wy5OGVWBOCrAN6ZOBwdtNDcm0Yl1Z3OpaiLjThd37qUX7ckqx+W275gGJXKlSBhOFx0JJyX1FbQv6TbHULuOKaaR4ixvJldghYhtqgBfvYdAzHIGSvGG2ipPQUdy9rl1KNWC2q5ngspGUMv3mZk+6v8RUIxIHfaPXBFhPcxI57fTtRurqO6jaFvKjkWeFhLMN+Hc7gPuswOAG4wMAAU76kSVkad4JNJhZY7y7itpJdkVtAIhtdySRuYYC5B4O0AnAJyABoVOdkOsV03WNNiWAl4rctGNsu2SNl+VgWRuvUHBwR3I6UkQ5O4mj3EOhXg0w+TN9onCB42xKCVyodcnICrwwI42jaKzkjeE3YhdrPUvEsX2WYx6ZcRt50sDFFupgchQwxzjJJXk4Kk8YojIT3NaLTtFOqmC3nCTwssps45sBWXGGKA8HpxwDwSDmpZpa5B4wkaLTYZEu4oGSfesciEmdlBKoo4G4nBAOeg9KqLE1oWoFkSGNJnEkqqA7BdoZsckD3Oa6jiJaBBQAUAFABQAUAFABQAUAFABQAUDCgAoEFABQMKACgQUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUWE9GZPiL/AJBLf7y/zrah8Ry4xXicd6Hv616clJI8OEFc6TTrK1ktLbzI4SxyxyvzMBnOAT83vx2rzqtSaZ6tGEOXUgtFshYElLV1UANMzAMuSdvGDk+pzxTbqXIiqTotk1hZWj2duJVt2kZsggHLKpyduT82BntUzqVDSjCi6dxtlBpssVuPIWRiQAGKhyckEt8wzkY+XHBpe0qCp04NFSGyi22rkIXa4UumcnymO0Aj8Dke4rX2s9TD2ULmZKAJZABgBjx+PSu2nzdTjqKnAmtba5utyWyuwxlsHAA/2j0qKsqS3LpQnU+A1rXww7hWnnCA8hY+T+DdK5JYhdEd0cDfc2LXRrK0GUhDN3Z+T/hWLqyZ108JTjuXwAOB0HSsnzHVpHZEV3Otpay3DqWWNclR1Y9h+JwPxpXH7z2MXUtUvI90LS2dlcAqDEXMsjbmAwPlCk4JJUZbGOBnNZqSZrGjJK5NrUMqTtcWE12NRlhaKGOF1w+35gSWHCjdycgfMOCQpCk0VCTvYb4cuGkE9sFeJYFVfs80axyRuc7gyhmOD8pDEknk5IOaICqGlcX1nHKttcTKGkXhXztIYkAE9BuIIGTzg4zitGjKJlaeNXszd6folrZGBLhmkuJJmVY2bBChcYJAxlc4GR64GEjppO6NOxuvEr6pa291YRpbAsbi5DAgrtO1Vw2c7sZOMY7A1BpbU6denTHNAx1ABQAUAGaAGF1BIzz+tAGVpms2+qQTTrujSJ9rCQgHlQwPHYqQfxPpQCMjxVYWt3c2UbRQi7nby/OwTIkYBbKgHpkgZOQu4nBzg3FGc2W7i2W6s5LWQsI5EKNtIBUEY44wPyx7Y4rbl0OaVTUn0qU3lnNaXgSV7eQxMSgxIoAZWxjGdpXOBjIOABisJaHTGV0WdTvPsmkXF1DsdkjOwA/Lu6AZHbJ/pUpalt6GE0S6SNMkRgTbyLbsSAoZZCFbPZfmw2Om4Y64rZrQ5lLUn1u6guL6KzeCceVLHuuYpBG0JfKqVzknI3A4xgHvWa2Nt2N1TStPt20qO3s7eN/tShGCAMoVGbj3IXaT1AbPWiG4TWhcZFkRkkRWjbhlYZVh/tA10tHHz2Zn6fo0OnTB43YhEMUYKKuFJB5IALEYwCew980kipSVgurJINSttXt7VWuISVlWNR5kkZG3APcrwwXvjrUTRpTmrGLOly0++aK6ZJ5fMS3iR1Vt0rA9AdjKqxuCxBDDgjJqVEftFc1dPZbTxTHZ/Y3WNYXMDx427SF3uxzlizKq84IOOuchTRpCRHP9u8Qwy3Ed7Lbx+eDBCyqQmzA+bC7lcOrNjJxgAjBNOESKtSxtIG2jcQWA5IGATjkgV0HMOoAKACgAoAKACgAoAKACgAoAKACgYUAFAgoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKGht3ZS1Oza/szArBSWByRnoauErO5jiaXPGyMQeFp8cXEX/AHya7HjDzVl9RfaJk8P3yRmNL8BD1UbgKxeIu72NFhqy6kQ8MXIVk+1x7GIJXa2D9ar63HsL6lV7kieHr2OPy01DEfPyqzAc+wNS8RFu9i44SqupGnhi5jYMl3GpXlSEPBHT6VXt12J+qVCoNDvF1YWyBggTzTdbSFU5PAPrkCk66D6pMt/8IvcE5NzET3+U81UcXymUsu5mNtrdtNmureZEuLWUx28xVtrFnBICrj5uG5Gc857GuWtX52ehhsGqaOjtbeK0tY7eFQsUSqiKDnCgYHP4VFzrZNVWICkNkcqJNDJFIoaN1IZT0ZSOc+g7VLKRz6h7T7Swn1AagZswRFWkikUHaMkcMCuAxZhtwMYwM4W1OhS902p7bz5YpEnkhlhDBZI8HhsAg5GCDtXt2H0rWSujng7SM7TJftN8rNdGYJDIsDSBt8sbOGBLMMMFwACCc9TjpUxNZmlpsEd5eat5yI6s0duYiOCoTdz1znzScemKibKpoqv4RuYUE6asxukUKrCMxq4AwCzK27cRwW3Yyc7e1Tc0UbIhtfEEemzWpvL2T7HcBkZbghpLeZSoKk/eIyxU5BwdvZuGEXqdmnTpjn86hFj6ACgGNZto6ZpMEUb7VLbTkD3LEFzhVVSzMQM4AUEn/wCvVKIpOxkC61q7T5Vs4DMAVbaxaFT2Knhmx7gA9jjnRRMvamNDpwlht72PSkvbQ5gihZAZWUZw7FmC4LFsjbwGz7VLBI2To11BpNlJGwfULVMbQ2FlUnJiJPboATyCAfWkpFuNxbe8iuWdE8xJlALRSoVkTPqp+h5GQcHmt1O6OSpT965mzeafDs1zG+xbm9kN9KpBdbcOynHoVUKuRnAyRWLV2dPN7oappenpYzIUki8xsRxQBgplwQpWNeN3HXA4BPUE1dlEyhNyJNLgY2E2mX8YEqEh4SSR5bElQpzkrjKgk5+U+gqkuYU20WTpcAgeKLdCxkWUSg7nDrjactnOMDAORxTcCFMiGl3B1WG+l1OeYxoyeW8aBSpzkDaoxzg5AycYzihQK5yzereNbFbKSNZ9w+Z1GCOrDpgE8YyCP5hsyH2xmNvELkRi52L5ixn5c98Z7ZH/AOumpFcpMRkHoQaokMHJ9+tAFG+097uVJY5xE6xvEA0e9drgBiBkENgYyD+BqZRNISsiza262drFbR4CRqFHAGcDqcdyck+tEUZyd2TVQBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABRcdgphe4UrE2YUDul0CjUafkFF2DCiwryExznJ9aViryAcdKdrk6orf2fai+a98oeeygEk9AABwOxwAM+gAqeWxV2WgMVViUFO4MKTHEyooNSOqiWWVlgDPlFkXyymDt2qBuLBsFixHTAyKyZoW9RSeTTLqO2keKcxN5bRgbg2DjGc9+PxqraExl0OcS/uZLuSOO6nuLdkUQ7zkSb2CspbAIYF9ob+HaBz8wGKlqa8nU24dJ2yWkk97cTtaqVhAIjQLt28qow3HqT0HpWsYmc5EK63Z6fromdpYoJ0aF3MTbWdD8pUgfNgblOOenYVlURtSZ09vfRXtss9vIssTDKuhyD/h9Ovris0brYqy6Fpt1cTzT2ccjzoY5C2SHU4yCvT+FecZwBzxTuSlqaFpbRWVpFa26bIYlCIoJO1QMAc81LKGX14LGynuWUsIkLbV6n0A+tNAQaRfyajpkF1JEsTyA7kVi4VgSCAcDI464FNiRJqk4t9NuJjKYgkbN5gTcU4OCF74ODjvSQMwLGGaRLe9vpJHvWhC7XwBFuALKoUADkDPc4A9K3SOaU7iLF/bd5x5gsIQymRJGTzJDgDaRjIXB+bOMngHrSlKxcKdzoLKxhsbGG3hLmKJfl3MWJ75J6k1i2bWsZ0viK1N5cWiW97LJC2x/Kt2YA4B/Lnr0PPXFNRBMzLq6TUtUE+lFhMlrJE7yQsoVsgxqysByG3HjkfStIIyqFeLS7dLCS51S2t1uFLSSywoFZl6kMVC7hjqMEH0J5qktTBSuSLerqlxHNYOftdi/mPZ3Clc7gcbum0lSxVufvZIxRJXLg1EvWzSTX97cmCWCOYxlVmADblXaRgZwvAx6nJHGCXCLQpyTLdbNmLQUJgkJ170mgMm50NZ9QN4l3JDMzq5dUTcAAFKhiNwUgcr05J4JqLFcxr9+pP1qyQoAKY1sFBMVdhSGFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAB6+/WgBD/nik0CMKztrV9buEku7m4uA4kCyrhRtIYKGAw20suOwODgnms7GqZaur65uS9ppMfnz4ZHmVwFgYjAJJyrMDyVByBzz0pSkVGBtro9p/Zy2ThpYg28MzHeGyTuDLghsnqMYrBs6Iqxy6aTI11qlk9/NIu5XyDtG5kATeVwSVAU4XAPynqa1itDKb1Op0G5kudKheXJkUGNyTksysVJ/Ern8azlubR2NSkthow/EcwWxWDBZ5riKNUAzu+dWK+2VDc/1wC4bkSE8MSBtChKkNh5VyOmRI3SnIcLMj8TX8EOmNavcxRNcssT72AKxu21mAz2BI+tEUTUkkOEYWPytn7vGzBB6YxjPrW+hzRbuYkOqTLDDZadqqSxwghRb2hmlCrwFZV+XaM43ADOBispJGyuaOk6tOJ4be4ujdxzhkR5IfKlEqD5lZQPTJ6Z7c1LRakR6tNZayrW9pZRXjlgjXbwI8cQzhsFvvEDIwobBPNUkTKoZegXUsU32H/SrhF3RF2DMsTIW+Vifu7lClV5xxnrzUSJLQ6QAMpyOvX34x/LitbGEXZmNeaOsflGzh/0WPh7GIiJWBJLFSpX5un3jt45qJRNYSLOky3DwPHNHOBC+xJJ4yryDAIJB6sMkEgkMRkdTTixTVzRrQyCgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKYBQAh7fXii4mZmpwRW9ldXMCJC8xVbidYxnyywVm4GSVXJHvispM0gdHYQ29vYQQ2+zykQBdpBBGOuR1z69652ddijf69bWkpt4le7ukJ3QQEF1AGWJycDjGBnJJA700guUdOjdIWnkTZLcStOylcFdx+VTnuFwDnocgV0RWhzTlqR6PJdWWox6NAQ9pbR7nJi2FVbO07gxLMT1+XHUk54rnludMHoaes6n/Z0UYj2GWQMQZWIRFUZZmPXAyOBySQPcCQN2MCSe1lujqd5dm5u7aLCwGMR7AzDbtQjcWZgoBJ7jgZrSETKUinefadNuWW4v5bQXSAO9iwIinfIKmMNknkfMFDFipyOcwtSrOJcsVs0vlicX010bcbXv4XOQjclS4zu3NkgE9RyOK1SRjNOQ6ewuv7bWREYwXDHzplmKlY/KKshH+9tZWXoQemTkcWUmkXbZNUt4xCk9iqRosSyCAl2UDAyNwXgdhkd+M4qeRjdRFW2NjNPcaNJE8rwYlczKD5rNhi4PcgsM9MEgDPa0jNyNYKiIFVAqqPlVRtAA6ADtTcSNzFvNGBubiS3s4XaeM4kL7Ggl3EmRTjOD8pwuMlfcmptY2vdG2u4KoZtxAALYxk+taIxtqB6H6UMIlC1gvk1S7kmfNuwHlKHBAHGMLjK8Z3ZJyTkYqbGlzQqzIKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAIrl50tZXtkWSdUJjRn2qzdgW7c96mQLcydM1aV/3WpARytK0ULrCVjfHBAYFlJDBh1H05rO5u1oW00mOJTDDcXUVqxYvbpKVQ5JJA43KMk/KpUeo7UKJHtGW7e3itYRDBGscakkKvTJ6n8T+PvVqIudkpqiTKuJ/7P1y1uI0uczA+csKswmAG1VK/d3ZYHcduFUjntjJHRTlYL9bnWbtJUheBbeL919oUANIWDHO0sduEAP1qeRjnNNjNYvoL21tr54wGtZDFc205BKK4KlW6nGQhDDIIO4ZHIErFzacTINrLb27QyQx2l26AW0ENshWVs/d3hi2QcHJYfKu7HBAbRCnyo2riF7BkuIY5bmb/VvJNM8vlIeSQMliMqOAPQ1SiY+0uyjbadrU7i6F+bJndneFk83I3fKpVuFG3oQAQGwc4BqkNyOj4zwMDsPSrMWxgRRIZNo3Y2k4GSB0GeuOemcZqSmPrQEwpEBQWgoEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAHcfWiQluYthaldYunbTI4olOYZidzEkkkqSSFBBJIUDB45rPlN3LQ2h+GO2K0MeYKB3QUxCOyqrO7AKqksTwAMcn8qiSGmUYNTimdEaK4g8xDJGbiPYrgAZIJJ6ZH4GpuXKm9ya6ayhIubsW8ZXCiWYKNp7AM3T8DTsQmyWeeOCJ5pnVI16sxPHIH58gYHJ4ApNFR95DLe5hu0LwvuUMQcqVIYdQQQCMccEVSZHLZk9MAAyQOOeOaAsZem6nLf3UwIj8kKWUKGDphiu1yeCxA3bRgrjntUGjRqVaIsFMLBQAUCCgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAEIz1oAUKB0FAAOBQAUAFNAzN1dfMWCKVriO0kZlna3BLYKkBeASAcnkD0GRk1jNXNIOxkjTbe2tbe5v4yR5yxyzXZLsIVLMocFiqksEBAwOmcdoSZtz8xpWOnw3OgWMF3GzBUWQAuwZSQccggjhiMdgcdq1SMZPlLV1au8EC2yxB7aRJIkdfkLAEBSOoGDwRypGcHpSlG4ozCxhuFmvLi4RIjcSiQQpIZAuAFJJIAySM4HA9TRFDk7lytDMKACkNu4VQJBSEFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAZoAKYBRYdwIB4IBGMcilygnYKLA/eCgVrB396BhQIKAKV7dzW8sEMSxbpg2JJn2ou0FufUkAkDI4BOeKzlI0hElsLn7bYQXO0p5qK209QSMkdOcHIz3pxYTVixVmYUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFANlLUtSh0q1+0Tq5jLbcKAecE9SQB0PU0iki1G4eNWAIDAMAwwQCM4I7H2oEPqgCkIKADt0zQCKVql+l7dtcyQtasR5CopDLyc7vU4xz7UFMu0EhQBBcWsN3EYrmGOWIkMVkUMCQcg49f8APTilYZNzkk857nrRYQtMAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAaGsisCCAQexAPfI6+9IpMcBj6UxBTAKQgoAKAQUDYUCCgApgFABSAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACiwB3oC4Dk4HJ9BRoCuIflUseFAyWPAA9c0rotJiRukihkdXU9GVgwP4ii4mh2QM8jimLYKBBTAKQBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFA0FAmGaBiZ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Ftn2MkCQMBkk5wAuOd3QjpycVkoHXzi/2rqRIC6XBgDB33eMn22ocj64PtVezJ9qH9s6gw2ro7LKOrPcKIvwYZb81H4UezD2pE8+r3GInkgt0yd00GSzD0UNkL/vZb2AoVIl1SE6akpH2u5u7wKwYJcSgrkcj5VCg/iD9KtQMnO5ewPStTMKACgQUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQCVhnlpvD7F3gYDbRkD0z196mxfMPqiQoCwU7isFABSGFABQIKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKAP/Z";
+
+const PIN = {
+  "제주::한라산":[40.1, 88.7],
+  "대구·경북::성인봉":[78.8, 22.6],
+  "수도권::고려산":[29.6, 24.2],
+  "수도권::마니산":[29.0, 27.4]
+};
+function projPct(lat,lng,key){
+  if(key && PIN[key]) return PIN[key];
+  if(lng >= 130.3) return [78.8, 22.6];
+  if(lat < 33.85) return [40.1, 88.7];
+  const x = 33.5 + (lng - 126.15) / (129.48 - 126.15) * 40.5;
+  const y = 9.2 + (38.62 - lat) / (38.62 - 34.29) * 66.5;
+  return [x, y];
+}
+
+function renderMap(){
+  const st=statsNow();
+  const el=document.getElementById("mapApp");
+  const regions=REGIONS.map(([r,list])=>{
+    const d=st.byRegion[r]||0;
+    return {r,d,t:list.length,pct:list.length?d/list.length:0};
+  });
+  const dots = allMountains().map(m=>{
+    const ll=COORDS[m.key]; if(!ll) return "";
+    const [x,y]=projPct(ll[0],ll[1],m.key);
+    const done=!!(state[m.key]&&state[m.key].done);
+    return `<button type="button" class="mdot ${done?"done":"todo"}" data-k="${m.key}" title="${m.name}" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%"></button>`;
+  }).join("");
+  el.innerHTML=`<div class="map-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:end">
+      <div><b>대한민국</b><div class="sub">${st.done} / ${st.total} 완등</div></div>
+      <div class="ring-num">${Math.round(st.done/st.total*100)}%</div>
+    </div>
+    <div class="kmap-box">
+      <img class="kmap" alt="대한민국 지도" src="${KOREA_MAP}">
+      ${dots}
+    </div>
+    <p class="kmap-legend">빨간 점 = 완등 · 점 누르면 기록장 · 아래 권역을 누르면 목록</p>
+    <div>${regions.map(x=>`<button type="button" class="rchip cmp" data-r="${x.r}" style="width:100%;text-align:left;background:none;border:0;border-top:1px dashed var(--line);padding:8px 0;cursor:pointer">${x.r} <b>${x.d} / ${x.t}</b></button>`).join("")}</div>
+  </div>`;
+  el.querySelectorAll(".rchip").forEach(g=>{
+    g.onclick=()=>{
+      query=""; filter="all";
+      document.getElementById("q").value="";
+      setView("list");
+      document.querySelectorAll(".filters button").forEach(b=>b.classList.toggle("on", b.dataset.f==="all"));
+      const name=g.dataset.r;
+      setTimeout(()=>{
+        const n=[...document.querySelectorAll(".region-name")].find(el=>el.textContent===name);
+        if(n){ n.closest(".region")?.classList.add("open"); n.scrollIntoView({behavior:"smooth",block:"start"}); }
+      },50);
+    };
+  });
+  el.querySelectorAll(".mdot").forEach(c=>{
+    c.onclick=ev=>{
+      ev.stopPropagation();
+      const k=c.getAttribute("data-k");
+      const [r,...rest]=k.split("::");
+      openSheet(r, rest.join("::"));
+    };
+  });
+}
+
+function renderStats(){
+  const st=statsNow();
+  const pct=(st.done/st.total*100).toFixed(1);
+  const maxR=Object.entries(st.byRegion).sort((a,b)=>b[1]-a[1])[0];
+  const doneMs=allMountains().filter(m=>state[m.key]&&state[m.key].done);
+  const maxH=doneMs.reduce((a,m)=>Math.max(a,ELEV[m.key]||0),0);
+  const rec=recommend();
+  const family = isRoot() ? allBooks.map(b=>{
+    const n=Object.values(b.state||{}).filter(s=>s&&s.done).length;
+    return `<div class="scard">👤 <b>${b.name}</b> · ${n} / 149</div>`;
+  }).join("") : "";
+  document.getElementById("statsApp").innerHTML=`
+    ${family}
+    <div class="statgrid">
+      <div class="scard"><span>완등</span><b>${st.done} / ${st.total}</b><div class="bar"><i style="width:${pct}%"></i></div></div>
+      <div class="scard"><span>완등률</span><b>${pct}%</b></div>
+      <div class="scard"><span>누적 고도</span><b>${st.sum.toLocaleString()}m</b></div>
+      <div class="scard"><span>최고 고도</span><b>${maxH?maxH.toLocaleString()+"m":"-"}</b></div>
+      <div class="scard"><span>가장 많이 간 지역</span><b>${maxR&&maxR[1]?maxR[0]:"-"}</b></div>
+      <div class="scard"><span>최근 완등</span><b>${st.last?st.last.name:"-"}</b></div>
+    </div>
+    <div class="rec"><b>🥾 다음 산 추천</b>${rec}</div>
+    <div class="scard" style="margin-top:10px"><b>오른 높이 ≈ 이런 것들</b>
+      ${LANDMARKS.map(([n,h])=>{
+        const times=st.sum/h;
+        const label = times>=1 ? `${times.toFixed(1)}배` : `${Math.round(times*100)}%`;
+        return `<div class="cmp">${n} <span class="muted">(${h.toLocaleString()}m)</span> · <span class="pct">${label}</span>
+          <div class="bar"><i style="width:${Math.min(100,times*100)}%"></i></div></div>`;
+      }).join("")}
+    </div>
+    <h3 style="margin:16px 0 6px;font-family:'Noto Serif KR',serif;color:var(--forest)">업적</h3>
+    ${ACHIEVEMENTS.map(a=>{
+      const on=a.test(st);
+      return `<div class="ach ${on?"":"off"}"><i>${a.icon}</i><div><b>${a.name}</b><div style="font-size:12px;color:var(--muted)">${a.desc}</div></div><div>${on?"획득":"미획득"}</div></div>`;
+    }).join("")}
+  `;
+}
+
+function recommend(){
+  const todo=allMountains().filter(m=>!(state[m.key]&&state[m.key].done));
+  if(!todo.length) return `<div>모든 명산을 완등했어요.</div>`;
+  const st=statsNow();
+  let pick;
+  if(st.over1000<5) pick=todo.filter(m=>(ELEV[m.key]||0)>=1000 && (ELEV[m.key]||0)<1300)[0];
+  if(!pick) pick=todo.filter(m=>COURSE[m.key])[0];
+  if(!pick) pick=todo.slice().sort((a,b)=>(ELEV[b.key]||0)-(ELEV[a.key]||0))[0];
+  return `<div style="margin-top:6px"><b>${pick.name}</b> · ${(ELEV[pick.key]||0).toLocaleString()}m · ${pick.region}<div style="font-size:12px;color:var(--muted);margin-top:4px">${(ELEV[pick.key]||0)>=1000?"이번엔 1000m에 도전해볼까요?":"아직 안 오른 명산이에요."}</div></div>`;
+}
+
+
+function familyToken(){
+  let t="";
+  try{ t=localStorage.getItem("stamp_family")||""; }catch(e){}
+  return t;
+}
+function syncUrl(){
+  try{ return (localStorage.getItem("stamp_sync_url")||"").trim(); }catch(e){ return ""; }
+}
+function gistId(){ try{ return (localStorage.getItem("stamp_gist")||"").trim(); }catch(e){ return ""; } }
+function gistToken(){ try{ return (localStorage.getItem("stamp_gh")||"").trim(); }catch(e){ return ""; } }
+function setGistId(v){ try{ localStorage.setItem("stamp_gist",(v||"").trim()); }catch(e){} }
+function setGistToken(v){ try{ localStorage.setItem("stamp_gh",(v||"").trim()); }catch(e){} }
+function parseGistId(v){
+  v=(v||"").trim();
+  const m=v.match(/gist\.github\.com\/(?:[^/]+\/)?([a-fA-F0-9]+)/) || v.match(/^([a-fA-F0-9]{8,})$/);
+  return m?m[1]:v.replace(/.*\//,"");
+}
+function apiSync(){
+  let u=syncUrl().replace(/\/$/,"");
+  if(!u) return "";
+  if(!/\/sync$/.test(u)) u+="/sync";
+  return u;
+}
+function setFamilyToken(v){ try{ localStorage.setItem("stamp_family", (v||"").trim()); }catch(e){} }
+function setSyncUrl(v){ try{ localStorage.setItem("stamp_sync_url", (v||"").trim()); }catch(e){} }
+function newFamilyCode(){
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s=""; for(let i=0;i<6;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  setFamilyToken(s); return s;
+}
+function stripPhotos(state, keep){
+  if(keep) return state;
+  const o={};
+  Object.keys(state||{}).forEach(k=>{
+    const v=Object.assign({}, state[k]||{});
+    delete v.photo;
+    o[k]=v;
+  });
+  return o;
+}
+async function collectBooks(withPhoto){
+  const books={};
+  if(isRoot()){
+    for(const [id,u] of Object.entries(users)){
+      if(!u || u.name==="root") continue;
+      let st={};
+      try{ const raw=await storageGet(progressKey(id)); if(raw) st=JSON.parse(raw);}catch(e){}
+      books[u.name]={pin:u.pin,state:stripPhotos(st,withPhoto),updated:Date.now()};
+    }
+  }else if(currentUser && currentUser.name!=="root"){
+    const u=users[currentUser.id]||{};
+    books[currentUser.name]={pin:u.pin,state:stripPhotos(state,withPhoto),updated:Date.now()};
+  }
+  return books;
+}
+
+function countDone(st){
+  return Object.values(st||{}).filter(s=>s&&s.done).length;
+}
+function sumElev(st){
+  let n=0;
+  Object.keys(st||{}).forEach(k=>{ if(st[k]&&st[k].done) n+=ELEV[k]||0; });
+  return n;
+}
+function saveRankBoard(rows){
+  try{ localStorage.setItem("stamp_rank", JSON.stringify({at:Date.now(),rows:rows})); }catch(e){}
+}
+function loadRankBoard(){
+  try{ const o=JSON.parse(localStorage.getItem("stamp_rank")||"null"); return o&&o.rows?o:null; }catch(e){ return null; }
+}
+function buildRankFromBooks(books){
+  const rows=[];
+  Object.keys(books||{}).forEach(name=>{
+    if(name==="root") return;
+    const st=(books[name]&&books[name].state)||{};
+    rows.push({name:name,done:countDone(st),sum:sumElev(st)});
+  });
+  if(currentUser && currentUser.name!=="root"){
+    if(!rows.some(r=>r.name===currentUser.name)){
+      rows.push({name:currentUser.name,done:countDone(state),sum:sumElev(state)});
+    }else{
+      rows.forEach(r=>{
+        if(r.name===currentUser.name){ r.done=Math.max(r.done,countDone(state)); r.sum=Math.max(r.sum,sumElev(state)); }
+      });
+    }
+  }
+  rows.sort((a,b)=> b.done-a.done || b.sum-a.sum || a.name.localeCompare(b.name,"ko"));
+  return rows;
+}
+function rankHtml(){
+  let rows=[];
+  if(isRoot() && allBooks && allBooks.length){
+    rows=allBooks.map(b=>({name:b.name,done:countDone(b.state),sum:sumElev(b.state)}));
+    rows.sort((a,b)=> b.done-a.done || b.sum-a.sum || a.name.localeCompare(b.name,"ko"));
+    saveRankBoard(rows);
+  }else{
+    const board=loadRankBoard();
+    rows=board?board.rows.slice():[];
+    if(currentUser && currentUser.name!=="root"){
+      const mine={name:currentUser.name,done:countDone(state),sum:sumElev(state)};
+      const i=rows.findIndex(r=>r.name===mine.name);
+      if(i>=0) rows[i]=mine; else rows.push(mine);
+      rows.sort((a,b)=> b.done-a.done || b.sum-a.sum || a.name.localeCompare(b.name,"ko"));
+    }
+  }
+  if(!rows.length){
+    return `<div class="scard" style="margin-bottom:12px"><b>가족 랭킹</b><div style="font-size:12px;color:var(--muted);margin-top:6px">서버에서 받아오면 순위가 생깁니다. 설정 → 다른 폰에서 받기</div></div>`;
+  }
+  const medal=["🥇","🥈","🥉"];
+  const me=currentUser&&currentUser.name;
+  return `<div class="scard" style="margin-bottom:12px"><b>가족 랭킹</b><div style="margin-top:8px">${rows.map((r,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px;${r.name===me?"font-weight:700":""}"><span>${medal[i]||(i+1)+"."} ${r.name}</span><span>${r.done}좌 · ${r.sum.toLocaleString()}m</span></div>`).join("")}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">완등 수 → 누적 고도 순 · 서버에서 받은 기록 기준</div></div>`;
+}
+async function applyBooks(remote){
+  const books=(remote&&remote.books)||{};
+  let n=0;
+  for(const name of Object.keys(books)){
+    if(name==="root") continue;
+    const incoming=books[name];
+    let id=Object.keys(users).find(k=>users[k].name===name);
+    if(!id){
+      id=uid();
+      users[id]={name:name,pin:incoming.pin||"0000"};
+    }
+    let local={};
+    try{ const raw=await storageGet(progressKey(id)); if(raw) local=JSON.parse(raw);}catch(e){}
+    const st=Object.assign({}, local);
+    Object.keys(incoming.state||{}).forEach(k=>{
+      const nv=incoming.state[k], ov=st[k];
+      if(nv && nv.done){
+        if(!ov || !ov.done || String(nv.date||"")>=String(ov.date||"")){
+          st[k]=Object.assign({}, ov||{}, nv);
+          if(!nv.photo && ov && ov.photo) st[k].photo=ov.photo;
+        }
+      }
+    });
+    await storageSet(progressKey(id), JSON.stringify(st));
+    n++;
+  }
+  await saveUsers();
+  if(currentUser && !isRoot()){
+    await loadState();
+  }else if(isRoot()){
+    await loadAllBooks();
+  }
+  renderAll();
+  return n;
+}
+async function syncPush(){
+  const fam=familyToken();
+  const gh=gistToken();
+  if(!gh) return toast("GitHub 토큰을 먼저 넣으세요.");
+  if(!fam) return toast("가족 코드를 먼저 만드세요.");
+  const withPhoto=!!(document.getElementById("syncPhoto")&&document.getElementById("syncPhoto").checked);
+  toast("올리는 중…");
+  try{
+    const payload={v:2,token:fam,books:await collectBooks(withPhoto),from:(currentUser&&currentUser.name)||""};
+    const id=parseGistId(gistId());
+    const body={description:"myungsan-stamp",public:false,files:{"myungsan.json":{content:JSON.stringify(payload)}}};
+    const headers={"Authorization":"Bearer "+gh,"Accept":"application/vnd.github+json","Content-Type":"application/json"};
+    const res=await fetch(id?("https://api.github.com/gists/"+id):"https://api.github.com/gists",{method:id?"PATCH":"POST",headers:headers,body:JSON.stringify(body)});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.message||("HTTP "+res.status));
+    if(data.id){ setGistId(data.id); const el=document.getElementById("gistId"); if(el) el.value=data.id; }
+    toast("GitHub Gist에 올렸습니다.");
+  }catch(e){ toast("올리기 실패. gist 권한 토큰인지 확인하세요."); }
+}
+async function syncPull(){
+  const fam=familyToken();
+  const gh=gistToken();
+  const id=parseGistId(gistId());
+  if(!id) return toast("Gist ID를 먼저 넣으세요.");
+  toast("받아오는 중…");
+  try{
+    const headers={"Accept":"application/vnd.github+json"};
+    if(gh) headers["Authorization"]="Bearer "+gh;
+    const res=await fetch("https://api.github.com/gists/"+id,{headers:headers});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.message||("HTTP "+res.status));
+    const file=(data.files||{})["myungsan.json"] || Object.values(data.files||{})[0];
+    let raw=file && (file.content||"");
+    if(!raw && file && file.raw_url){ const r=await fetch(file.raw_url); raw=await r.text(); }
+    const payload=JSON.parse(raw);
+    if(payload.token && fam && payload.token.toUpperCase()!==fam.toUpperCase()) return toast("가족 코드가 달라요.");
+    const n=await applyBooks(payload);
+    toast(n+"명 수첩을 받아왔습니다.");
+  }catch(e){ toast("받아오기 실패. Gist ID와 토큰을 확인하세요."); }
+}
+const GAS_CODE = `function doGet(e){
+  const f=file_();
+  return ContentService.createTextOutput(f.getBlob().getDataAsString()||"{}").setMimeType(ContentService.MimeType.JSON);
+}
+function doPost(e){
+  const incoming=JSON.parse(e.postData.contents);
+  const f=file_();
+  let prev={};
+  try{ prev=JSON.parse(f.getBlob().getDataAsString()||"{}"); }catch(err){ prev={}; }
+  if(prev.token && incoming.token && prev.token!==incoming.token){
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:"token"})).setMimeType(ContentService.MimeType.JSON);
+  }
+  const books=Object.assign({}, prev.books||{});
+  Object.keys(incoming.books||{}).forEach(function(name){
+    const a=books[name]||{state:{}};
+    const b=incoming.books[name]||{state:{}};
+    const st=Object.assign({}, a.state||{});
+    Object.keys(b.state||{}).forEach(function(k){
+      const nv=b.state[k], ov=st[k];
+      if(!ov || (nv && nv.done && (!ov.done || String(nv.date||"")>=String(ov.date||"")))) st[k]=nv;
+    });
+    books[name]={pin:b.pin||a.pin,state:st,updated:Date.now()};
+  });
+  const out={v:2,token:incoming.token||prev.token,books:books,updated:Date.now()};
+  f.setContent(JSON.stringify(out));
+  return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+}
+function file_(){
+  const name="myungsan-family.json";
+  const it=DriveApp.getFilesByName(name);
+  if(it.hasNext()) return it.next();
+  return DriveApp.createFile(name, "{}", MimeType.PLAIN_TEXT);
+}`;
+
+function renderSettings(){
+  document.getElementById("setApp").innerHTML=`
+    <div class="scard">${currentUser?currentUser.name+" 님으로 로그인 중":"로그인 안 됨"} · 기록이 이 기기 브라우저에 저장됩니다.</div>
+    <div class="sbtns" style="margin-top:12px">
+      <button class="pri" id="btnEx">기록 내보내기</button>
+      <button id="btnIm">기록 불러오기</button>
+    </div>
+    <input id="importFile" type="file" accept="application/json" hidden>
+    <div class="scard" style="margin-top:16px">
+      <b>GitHub로 동기화</b><br>
+      비밀 Gist 하나를 공용 서랍으로 씁니다. 루트 폰에서 한 번 올리면 Gist ID가 생기고, 다른 폰에는 그 ID와 토큰을 넣습니다.
+      <label style="display:block;margin:10px 0 4px;font-size:12px;color:var(--muted)">가족 코드</label>
+      <input id="famCode" placeholder="예: 7K2Q9P" style="width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;text-transform:uppercase">
+      <label style="display:block;margin:10px 0 4px;font-size:12px;color:var(--muted)">GitHub 토큰 (gist 권한)</label>
+      <input id="ghToken" placeholder="ghp_..." style="width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit">
+      <label style="display:block;margin:10px 0 4px;font-size:12px;color:var(--muted)">Gist ID 또는 주소</label>
+      <input id="gistId" placeholder="비워두고 먼저 올리면 자동 생성" style="width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit">
+      <label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px"><input type="checkbox" id="syncPhoto"> 사진도 같이 올리기 (용량 큼)</label>
+      <div class="sbtns" style="margin-top:10px">
+        <button class="pri" id="btnPush">이 폰 올리기</button>
+        <button id="btnPull">다른 폰에서 받기</button>
+      </div>
+      <div class="sbtns" style="margin-top:8px">
+        <button id="btnNewFam">가족 코드 만들기</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5">
+        Vercel 주소 예: https://myungsan-stamp.계정이름.workers.dev/sync<br>저장소는 Upstash Redis를 연결해야 기록이 남습니다.
+      </div>
+    </div>
+    <div class="scard" style="margin-top:16px">
+      <b>요청사항은 여기로 보내 주세요</b><br>
+      고치고 싶은 점, 산 정보 오류, 새 기능 아이디어를 적어 주시면 개발자가 받습니다.
+      <div style="margin-top:8px;font-weight:700;color:var(--forest)">gime41333@gmail.com</div>
+      <label style="display:block;margin:10px 0 4px;font-size:12px;color:var(--muted)">요청 내용</label>
+      <textarea id="reqBody" placeholder="예: 이 산 맛집이 문을 닫았어요" style="width:100%;min-height:90px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit"></textarea>
+      <div class="sbtns" style="margin-top:10px"><button class="pri" id="btnReq">메일 앱으로 보내기</button></div>
+    </div>
+    ${isRoot()?`<div class="scard" style="margin-top:16px"><b>루트 관리</b><div id="rootUsers" style="margin-top:8px"></div></div>`:""}
+    <button class="reset" id="btnWipe">전체 기록 초기화</button>
+    <button class="reset" id="btnOut">로그아웃</button>
+  `;
+  document.getElementById("btnEx").onclick=()=>{
+    const who=(currentUser&&currentUser.name)||"guest";
+    const blob=new Blob([JSON.stringify({v:3,name:who,state},null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="myungsan-"+who+".json"; a.click();
+  };
+  document.getElementById("btnIm").onclick=()=>document.getElementById("importFile").click();
+  document.getElementById("importFile").onchange=async e=>{
+    const f=e.target.files[0]; if(!f) return;
+    try{
+      const txt=await f.text(); const data=JSON.parse(txt);
+      const incoming=data.state || data;
+      if(isRoot()){
+        let name=(data.name||"").trim();
+        if(!name || name==="root") name=(prompt("이 수첩 주인의 이름")||"").trim();
+        if(!name) return toast("이름이 있어야 루트에 넣습니다.");
+        let id=Object.keys(users).find(k=>users[k].name===name);
+        if(!id){ id=uid(); users[id]={name:name,pin:"0000"}; await saveUsers(); }
+        let local={};
+        try{ const raw=await storageGet(progressKey(id)); if(raw) local=JSON.parse(raw);}catch(e){}
+        const st=Object.assign({}, local);
+        Object.keys(incoming||{}).forEach(k=>{
+          const nv=incoming[k], ov=st[k];
+          if(nv && nv.done){
+            if(!ov || !ov.done || String(nv.date||"")>=String(ov.date||"")){
+              st[k]=Object.assign({}, ov||{}, nv);
+              if(!nv.photo && ov && ov.photo) st[k].photo=ov.photo;
+            }
+          }
+        });
+        await storageSet(progressKey(id), JSON.stringify(st));
+        await loadAllBooks();
+        renderAll();
+        toast(name+" 님 수첩을 루트에 넣었습니다.");
+      }else{
+        state = incoming;
+        await saveState(); renderAll(); toast("기록을 불러왔어요.");
+      }
+    }catch(err){ toast("불러오기에 실패했어요."); }
+  };
+  document.getElementById("btnWipe").onclick=async()=>{
+    if(!confirm("지금까지의 완등 기록과 사진을 모두 지울까요?")) return;
+    state={}; await saveState(); renderAll();
+  };
+  document.getElementById("btnOut").onclick=logout;
+  const fam=document.getElementById("famCode");
+  const gh=document.getElementById("ghToken");
+  const gid=document.getElementById("gistId");
+  if(fam) fam.value=familyToken();
+  if(gh) gh.value=gistToken();
+  if(gid) gid.value=gistId();
+  if(fam) fam.onchange=()=>setFamilyToken(fam.value.toUpperCase());
+  if(gh) gh.onchange=()=>setGistToken(gh.value.trim());
+  if(gid) gid.onchange=()=>setGistId(parseGistId(gid.value));
+  const bPush=document.getElementById("btnPush");
+  const bPull=document.getElementById("btnPull");
+  const bNew=document.getElementById("btnNewFam");
+  const bGas=document.getElementById("btnCopyGas");
+  if(bPush) bPush.onclick=syncPush;
+  if(bPull) bPull.onclick=syncPull;
+  if(bNew) bNew.onclick=()=>{ fam.value=newFamilyCode(); toast("가족 코드가 만들어졌습니다. 다른 폰에도 똑같이 넣으세요."); };
+  if(bGas) bGas.onclick=async()=>{
+    try{ await navigator.clipboard.writeText(GAS_CODE); toast("구글 스크립트를 복사했습니다."); }
+    catch(e){
+      prompt("이 코드를 복사하세요", GAS_CODE);
+    }
+  };
+  if(isRoot() && document.getElementById("rootUsers")){
+    const box=document.getElementById("rootUsers");
+    const list=Object.entries(users).filter(([,u])=>u.name!=="root");
+    if(!list.length) box.innerHTML='<div style="font-size:12px;color:var(--muted)">아직 일반 수첩이 없습니다.</div>';
+    else{
+      box.innerHTML=list.map(([id,u])=>{
+        const book=allBooks.find(b=>b.id===id);
+        const n=book?Object.values(book.state||{}).filter(s=>s&&s.done).length:0;
+        return '<div style="margin:8px 0;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px"><div style="display:flex;justify-content:space-between;align-items:center"><span>👤 <b>'+u.name+'</b> · '+n+' / 149</span><span><button data-open="'+id+'">이 수첩만</button> <button class="danger" data-del="'+id+'">삭제</button></span></div></div>';
+      }).join("");
+      box.querySelectorAll("[data-open]").forEach(b=>b.onclick=async()=>{
+        const id=b.dataset.open, u=users[id];
+        await enterUser({id:id,name:u.name});
+        toast(u.name+" 님 수첩을 열었습니다.");
+      });
+      box.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+        const id=b.dataset.del, u=users[id];
+        if(!confirm(u.name+" 님 수첩을 삭제할까요?")) return;
+        delete users[id];
+        await saveUsers();
+        await storageSet(progressKey(id), "");
+        renderSettings();
+        toast(u.name+" 님 수첩을 삭제했습니다.");
+      });
+    }
+  }
+  const savedMail=localStorage.getItem("stamp_dev_mail")||"";
+  document.getElementById("devMail").value=savedMail;
+  document.getElementById("devMail").onchange=e=>localStorage.setItem("stamp_dev_mail", e.target.value.trim());
+  document.getElementById("btnReq").onclick=()=>{
+    const mail="gime41333@gmail.com";
+    const body=(document.getElementById("reqBody").value||"").trim();
+    if(!body) return toast("요청 내용을 적어 주세요.");
+    const who=currentUser&&currentUser.name?currentUser.name:"익명";
+    const sub="[명산 스탬프] 요청사항 - "+who;
+    const text="보낸 사람: "+who+"\n\n"+body+"\n";
+    location.href="mailto:"+mail+"?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(text);
+  };
+}
+
+function updateHeader(){
+  const st=statsNow();
+  const pct=st.total?Math.round(st.done/st.total*100):0;
+  document.getElementById("ringPct").textContent=pct+"%";
+  document.getElementById("ringLabel").textContent=`${st.done} / ${st.total}`;
+  document.getElementById("subline").textContent = st.done===0 ? "전국 명산을 하나씩 밟아가는 등정 수첩" : "다음 산은 어디로 가볼까?";
+}
+
+function renderAll(){
+  updateHeader();
+  renderList();
+  if(view==="map") renderMap();
+  if(view==="stats") renderStats();
+  if(view==="set") renderSettings();
+}
+
+function setView(v){
+  view=v;
+  document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on", el.id==="view-"+v));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
+  if(v==="map") renderMap();
+  if(v==="stats") renderStats();
+  if(v==="set") renderSettings();
+}
+
+function openSheet(region,name){
+  sheetKey=keyFor(region,name);
+  const s=state[sheetKey]||{};
+  document.getElementById("sheetTitle").textContent=name;
+  document.getElementById("sheetSub").textContent=`${region} · ${(ELEV[sheetKey]||0).toLocaleString()}m`;
+  const peaks=PEAKS[sheetKey];
+  const course=COURSE[sheetKey];
+  const food=FOOD[sheetKey];
+  document.getElementById("sheetInfo").innerHTML =
+    `<p><b>봉우리</b><br>${peaks || '<span class="empty">등록된 세부 봉우리가 없어요</span>'}</p>`+
+    `<p><b>대표 탐방코스</b><br>${course || '<span class="empty">국립공원 대표 코스 정보가 없어요</span>'}</p>`+
+    `<p><b>근처 맛집</b><br>${food || '<span class="empty">등록된 맛집 정보가 없어요</span>'}</p>`;
+  const peopleBox=document.getElementById("sheetPeople");
+  const editables=["sheetPhoto","dateEdit","weather","courseNote","hours","memo","photoBtn","photoClearBtn","unstampBtn","sheetClose"];
+  if(isRoot()){
+    const people=whoDid(sheetKey);
+    peopleBox.style.display="block";
+    peopleBox.innerHTML = people.length
+      ? `<p><b>누가 완등했는지</b></p>`+people.map(p=>{
+          const r=p.rec||{};
+          return `<p>👤 <b>${p.name}</b><br>${r.date||""} ${r.weather||""} ${r.hours||""}<br>${r.courseNote||""}<br>${r.memo||""}${r.photo?`<br><img src="${r.photo}" style="width:100%;border-radius:10px;margin-top:6px">`:""}</p>`;
+        }).join("")
+      : `<p class="empty">아직 이 산을 완등한 사람이 없습니다.</p>`;
+    editables.forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
+    const close=document.getElementById("sheetClose");
+    if(close){ close.style.display=""; close.textContent="닫기"; }
+  }else{
+    peopleBox.style.display="none"; peopleBox.innerHTML="";
+    editables.forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=""; });
+    const close=document.getElementById("sheetClose");
+    if(close) close.textContent="저장하고 닫기";
+  }
+  const img=document.getElementById("sheetPhoto");
+  if(s.photo){ img.src=s.photo; img.classList.add("show"); } else { img.removeAttribute("src"); img.classList.remove("show"); }
+  document.getElementById("memo").value=s.memo||"";
+  document.getElementById("weather").value=s.weather||"";
+  document.getElementById("courseNote").value=s.courseNote||COURSE[sheetKey]||"";
+  document.getElementById("hours").value=s.hours||"";
+  document.getElementById("dateEdit").value=(s.date||todayStr()).replace(/\./g,"-");
+  document.getElementById("sheetDim").classList.add("on");
+  document.getElementById("sheet").classList.add("on");
+}
+function closeSheet(){ document.getElementById("sheetDim").classList.remove("on"); document.getElementById("sheet").classList.remove("on"); sheetKey=null; }
+
+async function saveSheetMeta(){
+  if(!sheetKey) return;
+  if(!state[sheetKey] || !state[sheetKey].done) return;
+  const d=document.getElementById("dateEdit").value;
+  state[sheetKey].date = d ? d.replace(/-/g,".") : todayStr();
+  state[sheetKey].memo=document.getElementById("memo").value.trim();
+  state[sheetKey].weather=document.getElementById("weather").value;
+  state[sheetKey].courseNote=document.getElementById("courseNote").value.trim();
+  state[sheetKey].hours=document.getElementById("hours").value.trim();
+  await saveState(); renderAll();
+}
+
+function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onerror=reject;
+    r.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=720; let w=img.width,h=img.height; if(w>max){h=Math.round(h*max/w);w=max;}
+        const c=document.createElement("canvas"); c.width=w;c.height=h; c.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",0.62));
+      };
+      img.onerror=reject; img.src=r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function showMain(){
+  document.getElementById("intro").style.display="none";
+  document.getElementById("main").style.display="block";
+  document.getElementById("tabNav").style.display="flex";
+}
+
+function bind(){
+  document.getElementById("loginBtn").onclick=doLogin;
+  document.getElementById("signupBtn").onclick=doSignup;
+  document.getElementById("loginPin").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
+  document.getElementById("loginName").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("loginPin").focus(); });
+  document.getElementById("q").oninput=e=>{ query=e.target.value.trim(); renderList(); };
+  document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{
+    filter=b.dataset.f; document.querySelectorAll(".filters button").forEach(x=>x.classList.toggle("on",x===b)); renderList();
+  });
+  document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>setView(b.dataset.v));
+  document.getElementById("sheetDim").onclick=async()=>{ await saveSheetMeta(); closeSheet(); };
+  document.getElementById("sheetClose").onclick=async()=>{ await saveSheetMeta(); closeSheet(); };
+  document.getElementById("photoBtn").onclick=()=>document.getElementById("photoInput").click();
+  document.getElementById("photoClearBtn").onclick=async()=>{ if(!sheetKey||!state[sheetKey])return; delete state[sheetKey].photo; await saveState(); renderAll(); openSheet(...sheetKey.split("::")); };
+  document.getElementById("unstampBtn").onclick=async (ev)=>{
+    ev.preventDefault(); ev.stopPropagation();
+    const k = sheetKey;
+    if(!k) return;
+    delete state[k];
+    sheetKey = null;
+    document.getElementById("sheetDim").classList.remove("on");
+    document.getElementById("sheet").classList.remove("on");
+    await saveState();
+    renderAll();
+    toast("완등을 취소했어요.");
+  };
+  document.getElementById("photoInput").onchange=async e=>{
+    const file=e.target.files&&e.target.files[0]; e.target.value="";
+    if(!file||!sheetKey) return;
+    try{
+      const data=await compressImage(file);
+      if(!state[sheetKey]) state[sheetKey]={done:true,date:todayStr()};
+      state[sheetKey].photo=data;
+      const ok=await saveState();
+      if(!ok){ delete state[sheetKey].photo; toast("사진이 너무 커서 저장하지 못했어요."); }
+      renderAll(); openSheet(...sheetKey.split("::"));
+    }catch(err){ toast("사진을 불러오지 못했어요."); }
+  };
+}
+
+(async function init(){
+  await loadUsers();
+  bind();
+  renderUserList();
+  try{
+    const raw=await storageGet("stamp_session");
+    if(raw){
+      const u=JSON.parse(raw);
+      if(u && u.id && users[u.id]){
+        currentUser=u;
+        await loadState();
+        if(isRoot()) await loadAllBooks();
+        const who=document.getElementById("who");
+        if(who) who.textContent=u.name==="root"?"루트 관리자 · 전체 수첩":u.name+" 님의 수첩";
+        showMain();
+        renderAll();
+        return;
+      }
+    }
+  }catch(e){}
+  renderAll();
+})();
+
+</script>
+</body>
+</html>
